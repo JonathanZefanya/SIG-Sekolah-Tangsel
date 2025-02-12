@@ -1,0 +1,26 @@
+<?= $this->extend('layouts/app') ?>
+
+<?= $this->section('pages') ?>Data User Login<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
+<?= $this->endSection() ?>
+
+
+public function index()
+    {
+    }
+    public function create()
+    {
+    }
+    public function save()
+    {
+    }
+    public function edit($id)
+    {
+    }
+    public function update($id)
+    {
+    }
+    public function delete($id)
+    {
+    }
