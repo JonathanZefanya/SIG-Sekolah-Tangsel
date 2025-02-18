@@ -89,10 +89,19 @@ class UserLogin extends BaseController
     {
         $user = $this->user->where('user_id', $id)->first();
         if ($user->user_akses == "sekolah") {
-            $sekolah = $this->sekolah->where('user_id', $user->user_id)->first();
-            $this->sekolah->update($sekolah->sek_npsn, [
-                'user_id' => NULL,
-            ]);
+            $sekolah = $this->sekolah->where('user_id', $user->user_id)->findAll();
+            foreach ($sekolah as $s) {
+                $this->sekolah->update($s->sek_npsn, [
+                    'user_id' => NULL,
+                ]);
+            }
+        } else if ($user->user_akses == "dinas") {
+            $sekolah = $this->sekolah->where('user_id', $user->user_id)->findAll();
+            foreach ($sekolah as $s) {
+                $this->sekolah->update($s->sek_npsn, [
+                    'user_id' => NULL,
+                ]);
+            }
         }
         $this->user->delete($id);
         session()->setFlashdata('message', 'Data login berhasil dihapus');

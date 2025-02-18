@@ -209,7 +209,7 @@ class Sekolah extends BaseController
         $detail_sekolah = $this->detail_sekolah->where('sek_npsn', $id)->first();
         $sekolah = $this->sekolah->where('sek_npsn', $id)->first();
         $this->detail_sekolah->delete($detail_sekolah->sek_npsn);
-        unlink('assets/images/sekolah/' . $sekolah->sek_foto);
+        // unlink('assets/images/sekolah/' . $sekolah->sek_foto);
         $this->sekolah->delete($id);
         session()->setFlashdata('message', 'Data sekolah berhasil dihapus');
         return redirect()->to('/sekolah');
