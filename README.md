@@ -35,9 +35,12 @@
    database.default.password = 
    database.default.DBDriver = MySQLi
    ```
-4. **Jalankan migrasi database:**
+4. **Jalankan migrasi dan seeder database:**
    ```bash
    php spark migrate
+   ``` 
+   ```bash
+   php spark db:seed UserSeeder
    ```
 5. **Jalankan server lokal:**
    ```bash
