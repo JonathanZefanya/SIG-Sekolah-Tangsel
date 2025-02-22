@@ -13,7 +13,8 @@
                     <p class="text-dark my-4 text-xs font-weight-normal">
                         All rights reserved. Copyright © <script>
                             document.write(new Date().getFullYear())
-                        </script> Material Kit by <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a>.
+                        </script> Material Kit by <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a>
+                        and Design Code by <a href="https://xead.my.id" class="font-weight-bold" target="_blank">Jonathan Zefanya</a>.
                     </p>
                 </div>
             </div>

@@ -8,7 +8,7 @@
                     </script>,
                     made with <i class="fa fa-heart"></i> by
                     <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative Tim</a>
-                    for a better web.
+                    and Design Code by <a href="https://xead.my.id" class="font-weight-bold" target="_blank">Jonathan Zefanya</a>.
                 </div>
             </div>
         </div>

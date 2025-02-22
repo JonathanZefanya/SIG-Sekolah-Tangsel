@@ -26,13 +26,13 @@
                             <?= validation_show_error('user_email'); ?>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label>Password</label>
                         <input type="password" class="form-control <?= (validation_show_error('user_password')) ? 'is-invalid' : ''; ?>" placeholder="password" id="user_password" required name="user_password">
                         <div class="invalid-feedback">
                             <?= validation_show_error('user_password'); ?>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="form-group">
                         <label>User Akses</label>
                         <select class="form-select <?= (validation_show_error('user_akses')) ? 'is-invalid' : ''; ?>" id="user_akses" required name="user_akses">
