@@ -20,7 +20,7 @@
 ## 🚀 Instalasi
 1. **Clone repository ini:**
    ```bash
-   git clone https://github.com/jonathanzefanya/sig-sekolah-tangsel.git
+   git clone https://github.com/JonathanZefanya/SIG-Sekolah-Tangsel.git
    cd sig-sekolah-tangsel
    ```
 2. **Install dependensi menggunakan Composer:**
