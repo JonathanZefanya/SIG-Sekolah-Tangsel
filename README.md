@@ -21,6 +21,8 @@
 1. **Clone repository ini:**
    ```bash
    git clone https://github.com/JonathanZefanya/SIG-Sekolah-Tangsel.git
+   ```
+   ```bash
    cd sig-sekolah-tangsel
    ```
 2. **Install dependensi menggunakan Composer:**
