@@ -41,8 +41,8 @@ class AddDetailSekolah extends Migration
                 'constraint'     => ['a', 'b', 'c'],
             ],
             'det_kurikulum' => [
-                'type'           => 'INT',
-                'constraint'     => 11,
+                'type'           => 'VARCHAR',
+                'constraint'     => 50,
             ],
         ]);
         $this->forge->addKey('det_id', true);

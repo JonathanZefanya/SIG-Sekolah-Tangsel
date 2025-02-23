@@ -140,7 +140,7 @@
                     </div>
                     <div class="form-group">
                         <label>Kurikulum</label>
-                        <input type="number" class="form-control <?= (validation_show_error('det_kurikulum')) ? 'is-invalid' : ''; ?>" id="det_kurikulum" required placeholder="2023" name="det_kurikulum" autofocus value="<?= old('det_kurikulum'); ?>">
+                        <input type="text" class="form-control <?= (validation_show_error('det_kurikulum')) ? 'is-invalid' : ''; ?>" id="det_kurikulum" required placeholder="2023" name="det_kurikulum" autofocus value="<?= old('det_kurikulum'); ?>">
                         <div class="invalid-feedback">
                             <?= validation_show_error('det_kurikulum'); ?>
                         </div>
