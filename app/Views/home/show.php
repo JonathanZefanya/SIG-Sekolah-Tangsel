@@ -143,7 +143,7 @@
                 <li class="list-group-item text-primary font-weight-bold"><?= strtoupper($sekolah->sek_npsn) ?></li>
                 <li class="list-group-item text-muted"><?= strtoupper($sekolah->sek_nama) ?></li>
                 <li class="list-group-item text-muted"><span class="fw-bold">Alamat : </span><?= ucwords($sekolah->sek_alamat) ?></li>
-                <li class="list-group-item fw-bold"><a href='<?= site_url('rute/' . $sekolah->sek_npsn) ?>'>Tunjukan Rute <i class="ms-1 fa-solid fa-person-walking-arrow-right"></i></a></li>
+                <li class="list-group-item fw-bold"><a href='<?= site_url('rute/' . $sekolah->sek_npsn) ?>'>Tunjukan Jarak <i class="ms-1 fa-solid fa-person-walking-arrow-right"></i></a></li>
             </ul>
             `).addTo(map).openPopup();
     </script>
