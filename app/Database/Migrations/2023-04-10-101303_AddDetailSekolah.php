@@ -44,6 +44,10 @@ class AddDetailSekolah extends Migration
                 'type'           => 'VARCHAR',
                 'constraint'     => 50,
             ],
+            'det_website' => [
+                'type'           => 'VARCHAR',
+                'constraint'     => 50,
+            ],
         ]);
         $this->forge->addKey('det_id', true);
         $this->forge->addForeignKey('sek_npsn', 'sekolah', 'sek_npsn', '', 'CASCADE');

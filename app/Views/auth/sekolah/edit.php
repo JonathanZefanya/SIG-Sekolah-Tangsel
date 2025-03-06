@@ -144,9 +144,17 @@
                     </div>
                     <div class="form-group">
                         <label>Kurikulum</label>
-                        <input type="number" class="form-control <?= (validation_show_error('det_kurikulum')) ? 'is-invalid' : ''; ?>" id="det_kurikulum" required placeholder="2023" name="det_kurikulum" autofocus value="<?= old('det_kurikulum') ? old('det_kurikulum') : $det_sekolah->det_kurikulum; ?>">
+                        <input type="text" class="form-control <?= (validation_show_error('det_kurikulum')) ? 'is-invalid' : ''; ?>" id="det_kurikulum" required placeholder="2023" name="det_kurikulum" autofocus value="<?= old('det_kurikulum') ? old('det_kurikulum') : $det_sekolah->det_kurikulum; ?>">
                         <div class="invalid-feedback">
                             <?= validation_show_error('det_kurikulum'); ?>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Website Sekolah</label>
+                        <input type="text" class="form-control <?= (validation_show_error('det_website')) ? 'is-invalid' : ''; ?>" id="det_website" required placeholder="https://www.sekolah.com" name="det_website" autofocus value="<?= old('det_website') ? old('det_website') : $det_sekolah->det_website; ?>">
+                        <small class="text-xs fw-bold text-danger">* Jika Website tidak ada maka gunakan tanda "-".</small>
+                        <div class="invalid-feedback">
+                            <?= validation_show_error('det_website'); ?>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-sm btn-primary mt-3 mb-0">Simpan</button>

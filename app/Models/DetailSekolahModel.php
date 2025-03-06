@@ -11,6 +11,6 @@ class DetailSekolahModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'object';
     protected $allowedFields    = [
-        'det_guru', 'sek_npsn', 'det_siswa_p', 'det_siswa_l', 'det_akreditasi', 'det_akreditasi', 'det_kurikulum'
+        'det_guru', 'sek_npsn', 'det_siswa_p', 'det_siswa_l', 'det_akreditasi', 'det_akreditasi', 'det_kurikulum', 'det_website'
     ];
 }

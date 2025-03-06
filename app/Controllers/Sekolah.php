@@ -90,6 +90,9 @@ class Sekolah extends BaseController
             'det_kurikulum' => [
                 'rules'  => 'required',
             ],
+            'det_website' => [
+                'rules'  => 'required',
+            ],
         ]);
         if (!$validation) {
             return redirect()->to('/sekolah/create')->withInput();
@@ -117,6 +120,7 @@ class Sekolah extends BaseController
             'det_siswa_l' => $this->request->getPost('det_siswa_l'),
             'det_akreditasi' => $this->request->getPost('det_akreditasi'),
             'det_kurikulum' => $this->request->getPost('det_kurikulum'),
+            'det_website' => $this->request->getPost('det_website'),
         ]);
         session()->setFlashdata('message', 'Data sekolah berhasil ditambahkan.');
         return redirect()->to('/sekolah');
@@ -172,6 +176,9 @@ class Sekolah extends BaseController
             'det_kurikulum' => [
                 'rules'  => 'required',
             ],
+            'det_website' => [
+                'rules'  => 'required',
+            ],
         ]);
         if (!$validation) {
             return redirect()->to('/sekolah/edit/' . $id)->withInput();
@@ -200,6 +207,7 @@ class Sekolah extends BaseController
             'det_siswa_l' => $this->request->getPost('det_siswa_l'),
             'det_akreditasi' => $this->request->getPost('det_akreditasi'),
             'det_kurikulum' => $this->request->getPost('det_kurikulum'),
+            'det_website' => $this->request->getPost('det_website'),
         ]);
         session()->setFlashdata('message', 'Data sekolah berhasil dirubah.');
         return redirect()->to('/sekolah');
