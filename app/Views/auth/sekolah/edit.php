@@ -153,6 +153,16 @@
                         <label>Website Sekolah</label>
                         <input type="text" class="form-control <?= (validation_show_error('det_website')) ? 'is-invalid' : ''; ?>" id="det_website" required placeholder="https://www.sekolah.com" name="det_website" autofocus value="<?= old('det_website') ? old('det_website') : $det_sekolah->det_website; ?>">
                         <small class="text-xs fw-bold text-danger">* Jika Website tidak ada maka gunakan tanda "-".</small>
+                        <script>
+                            var input = document.getElementById('det_website');
+                            input.addEventListener('input', function() {
+                                if (input.value.includes('http://') || input.value.includes('https://') || input.value == '-') {
+                                    input.setCustomValidity('');
+                                } else {
+                                    input.setCustomValidity('URL harus diawali dengan http:// atau https:// atau "-" jika tidak ada website');
+                                }
+                            });
+                        </script>
                         <div class="invalid-feedback">
                             <?= validation_show_error('det_website'); ?>
                         </div>

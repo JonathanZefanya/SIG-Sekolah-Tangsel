@@ -56,14 +56,33 @@
                                             <span class="text-sm opacity-8 font-weight-bold"><?= ucwords($sekolah->det_siswa_p) ?> Siswa Perempuan</span>
                                         </div>
                                     </div>
-                                    <div class="d-flex p-2 text-white">
+                                    <!-- <div class="d-flex p-2 text-white">
                                         <div>
                                             <i class="fas fa-globe" aria-hidden="true"></i>
                                         </div>
                                         <div class="ps-3">
                                             <span class="text-sm opacity-8 font-weight-bold"><?= $sekolah->det_website ?></span>
                                         </div>
-                                    </div>
+                                    </div> -->
+                                    <?php if ($sekolah->det_website != '-') : ?>
+                                        <div class="d-flex p-2 text-white">
+                                            <div>
+                                                <i class="fas fa-globe" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <a href="<?= $sekolah->det_website ?>"><span class="text-sm opacity-8 font-weight-bold"><?= $sekolah->det_website ?></span></a>
+                                            </div>
+                                        </div>
+                                    <?php else : ?>
+                                        <div class="d-flex p-2 text-white">
+                                            <div>
+                                                <i class="fas fa-globe" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <span class="text-sm opacity-8 font-weight-bold">Tidak ada website</span>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
