@@ -2,8 +2,30 @@
     <div class="container">
         <div class="row">
             <div class="col-12 mx-auto text-center">
-                <h3 class="mb-3" style="text-transform: uppercase; font-family: 'Poppins'; font-weight: 700; letter-spacing: 0.3rem;">Peta Lokasi Sekolah</h3>
+                <h3 class="mb-3" style="text-transform: uppercase; font-family: 'Poppins'; font-weight: 700; letter-spacing: 0.3rem;">Peta Lokasi Sekolah Di Tangsel</h3>
                 <div class="card" id="map" style="height: 30rem;"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Keterangan Icon Map -->
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-12 mx-auto text-center">
+                <h3 class="mb-3" style="text-transform: uppercase; font-family: 'Poppins'; font-weight: 700; letter-spacing: 0.3rem;">Keterangan Icon Map</h3>
+                <div class="d-flex justify-content-center gap-4 flex-wrap">
+                    <div class="card p-3 d-flex align-items-center">
+                        <img src="<?= base_url('assets/images/icon/sd.png') ?>" alt="SD" class="img-fluid" width="100" height="100">
+                        <p class="text-muted text-center mt-2">SD/Sederajat</p>
+                    </div>
+                    <div class="card p-3 d-flex align-items-center">
+                        <img src="<?= base_url('assets/images/icon/smp.png') ?>" alt="SMP" class="img-fluid" width="100" height="100">
+                        <p class="text-muted text-center mt-2">SMP/Sederajat</p>
+                    </div>
+                    <div class="card p-3 d-flex align-items-center">
+                        <img src="<?= base_url('assets/images/icon/sma.png') ?>" alt="SMA" class="img-fluid" width="100" height="100">
+                        <p class="text-muted text-center mt-2">SMA/Sederajat</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
