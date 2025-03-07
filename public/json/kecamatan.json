@@ -1,0 +1,58 @@
+[  
+  {
+    "id": "3674010",
+    "regency_id": "3674",
+    "name": "SETU",
+    "alt_name": "Setu, South Tangerang City, Banten, Indonesia",
+    "latitude": -6.35023,
+    "longitude": 106.6704
+  },
+  {
+    "id": "3674020",
+    "regency_id": "3674",
+    "name": "SERPONG",
+    "alt_name": "Serpong, South Tangerang City, Banten, Indonesia",
+    "latitude": -6.30886,
+    "longitude": 106.68219
+  },
+  {
+    "id": "3674030",
+    "regency_id": "3674",
+    "name": "PAMULANG",
+    "alt_name": "Pamulang, South Tangerang City, Banten, Indonesia",
+    "latitude": -6.34789,
+    "longitude": 106.74116
+  },
+  {
+    "id": "3674040",
+    "regency_id": "3674",
+    "name": "CIPUTAT",
+    "alt_name": "Ciputat, South Tangerang City, Banten, Indonesia",
+    "latitude": -6.30771,
+    "longitude": 106.71757
+  },
+  {
+    "id": "3674050",
+    "regency_id": "3674",
+    "name": "CIPUTAT TIMUR",
+    "alt_name": "East Ciputat, South Tangerang City, Banten, Indonesia",
+    "latitude": -6.30851,
+    "longitude": 106.75652
+  },
+  {
+    "id": "3674060",
+    "regency_id": "3674",
+    "name": "PONDOK AREN",
+    "alt_name": "Pondok Aren, South Tangerang City, Banten, Indonesia",
+    "latitude": -6.28457,
+    "longitude": 106.69749
+  },
+  {
+    "id": "3674070",
+    "regency_id": "3674",
+    "name": "SERPONG UTARA",
+    "alt_name": "North Serpong, South Tangerang City, Banten, Indonesia",
+    "latitude": -6.25845,
+    "longitude": 106.65861
+  }
+]

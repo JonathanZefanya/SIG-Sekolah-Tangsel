@@ -3,24 +3,6 @@
         <div class="row">
             <div class="col-12 mx-auto text-center">
                 <h3 class="mb-3" style="text-transform: uppercase; font-family: 'Poppins'; font-weight: 700; letter-spacing: 0.3rem;">Peta Lokasi Sekolah</h3>
-                <!-- Buatkan Filter untuk SD, SMP dan SMA -->
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                            <label class="btn btn-outline-primary" for="btnradio1">Semua</label>
-
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-                            <label class="btn btn-outline-primary" for="btnradio2">SD</label>
-
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
-                            <label class="btn btn-outline-primary" for="btnradio3">SMP</label>
-
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off">
-                            <label class="btn btn-outline-primary" for="btnradio4">SMA</label>
-                        </div>
-                    </div>
-                </div>
                 <div class="card" id="map" style="height: 30rem;"></div>
             </div>
         </div>
@@ -88,7 +70,66 @@
         //     ]
         // }).addTo(map);
     <?php endforeach ?>
-
-    // Filter
     
+    // Fungsi untuk memberikan warna berbeda tiap kecamatan
+    function getColor(kecamatan) {
+        const colors = {
+            "SETU": "#B0C4DE", // LightSteelBlue
+            "SERPONG": "#87CEFA", // SkyBlue
+            "PAMULANG": "#4682B4", // SteelBlue
+            "CIPUTAT": "#5F9EA0", // CadetBlue
+            "CIPUTAT TIMUR": "#7B68EE", // MediumSlateBlue
+            "PONDOK AREN": "#6A5ACD", // SlateBlue
+            "SERPONG UTARA": "#6495ED" // CornflowerBlue
+        };
+        return colors[kecamatan] || "#D3D3D3"; // Default LightGray
+    }
+
+    // Menampilkan batas Kota Tangerang Selatan
+    fetch("<?= base_url('json/id3674_kota_tangerang_selatan.geojson') ?>")
+        .then(response => response.json())
+        .then(geojsonData => {
+            L.geoJSON(geojsonData, {
+                style: {
+                    fillColor: "transparent",
+                    color: "#FF0000", // Warna merah untuk batas kota
+                    weight: 2,
+                    dashArray: "5,5"
+                }
+            }).addTo(map);
+        })
+        .catch(error => console.error("Error loading city GeoJSON:", error));
+
+    // Menampilkan batas masing-masing kecamatan
+    const kecamatanFiles = [
+        "id3674010_setu.geojson",
+        "id3674020_serpong.geojson",
+        "id3674030_pamulang.geojson",
+        "id3674040_ciputat.geojson",
+        "id3674050_ciputat_timur.geojson",
+        "id3674060_pondok_aren.geojson",
+        "id3674070_serpong_utara.geojson"
+    ];
+
+    kecamatanFiles.forEach(file => {
+        fetch(`<?= base_url('json/') ?>${file}`)
+            .then(response => response.json())
+            .then(geojsonData => {
+                L.geoJSON(geojsonData, {
+                    style: function (feature) {
+                        return {
+                            fillColor: getColor(feature.properties.name),
+                            weight: 1,
+                            opacity: 1,
+                            color: "#555",
+                            fillOpacity: 0.5
+                        };
+                    },
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup(`<b>${feature.properties.name}</b>`);
+                    }
+                }).addTo(map);
+            })
+            .catch(error => console.error(`Error loading ${file}:`, error));
+    });
 </script>
