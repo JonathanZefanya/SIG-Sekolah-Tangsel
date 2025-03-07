@@ -74,13 +74,13 @@
     // Fungsi untuk memberikan warna berbeda tiap kecamatan
     function getColor(kecamatan) {
         const colors = {
-            "SETU": "#B0C4DE", // LightSteelBlue
-            "SERPONG": "#87CEFA", // SkyBlue
-            "PAMULANG": "#4682B4", // SteelBlue
-            "CIPUTAT": "#5F9EA0", // CadetBlue
-            "CIPUTAT TIMUR": "#7B68EE", // MediumSlateBlue
-            "PONDOK AREN": "#6A5ACD", // SlateBlue
-            "SERPONG UTARA": "#6495ED" // CornflowerBlue
+            "SETU": "#FF0000", // Merah
+            "SERPONG": "#0000FF", // Biru
+            "PAMULANG": "#008000", // Hijau
+            "CIPUTAT": "#FFFF00", // Kuning
+            "CIPUTAT TIMUR": "#800080", // Ungu
+            "PONDOK AREN": "#FFC0CB", // Pink
+            "SERPONG UTARA": "#FFA500" // Orange
         };
         return colors[kecamatan] || "#D3D3D3"; // Default LightGray
     }
