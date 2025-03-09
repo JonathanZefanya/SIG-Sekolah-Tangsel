@@ -152,6 +152,45 @@
             `).
             addTo(map);
         <?php endforeach ?>
+
+        // Fungsi untuk memberi warna khusus pada Kota Tangerang Selatan
+        function getTangselColor() {
+            return "#FF69B4"; // Warna pink untuk Tangsel
+        }
+
+        // Memuat batas wilayah Kota Tangerang Selatan dari GeoJSON
+        fetch("<?= base_url('json/id3674_kota_tangerang_selatan.geojson') ?>")
+            .then(response => response.json())
+            .then(geojsonData => {
+                L.geoJSON(geojsonData, {
+                    style: function () {
+                        return {
+                            fillColor: getTangselColor(),
+                            weight: 2,
+                            opacity: 1,
+                            color: "#000000", // Warna garis batas
+                            fillOpacity: 0.4
+                        };
+                    },
+                    onEachFeature: function (feature, layer) {
+                        layer.on({
+                            mouseover: function (e) {
+                                e.target.setStyle({
+                                    fillColor: "#FF1493" // Warna lebih gelap saat hover
+                                });
+                            },
+                            mouseout: function (e) {
+                                e.target.setStyle({
+                                    fillColor: getTangselColor()
+                                });
+                            }
+                        });
+
+                        layer.bindPopup("<b>Kota Tangerang Selatan</b>");
+                    }
+                }).addTo(map);
+            })
+            .catch(error => console.error("Error loading Tangsel GeoJSON:", error));
     </script>
     <?= $this->endSection() ?>
 <?php endif; ?>
