@@ -77,6 +77,7 @@
                 <li class="list-group-item"><a href='<?= site_url('show/' . $sekolah->sek_npsn) ?>'><?= strtoupper($sekolah->sek_npsn) ?></a></li>
                 <li class="list-group-item text-muted"><?= strtoupper($sekolah->sek_nama) ?></li>
                 <li class="list-group-item text-muted"><span class="fw-bold">Alamat : </span><?= ucwords($sekolah->sek_alamat) ?></li>
+                <li class="list-group-item fw-bold"><a href='<?= site_url('show/' . $sekolah->sek_npsn) ?>'>Lihat Detail <i class="fa-solid fa-circle-info"></i></a></li>
             </ul>
         `).addTo(map);
     <?php endforeach ?>
