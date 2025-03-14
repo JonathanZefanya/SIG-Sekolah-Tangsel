@@ -3,6 +3,7 @@
 <?= $this->section('pages') ?>Data Sekolah<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <div class="row">
     <div class="col-12">
         <div class="card mb-4">
@@ -24,6 +25,17 @@
                                         <br />
                                         Pengelola : <?php if ($sekolah->user_id != null) : ?><?= ucwords($sekolah->user_name) ?><?php else : ?>-<?php endif ?>
                                     </p>
+                                    <div class="d-flex p-2 text-white">
+                                        <div class="ps-3 border-container">
+                                            <!-- Gambar dengan event onclick -->
+                                            <img src="<?= base_url('uploads/sekolah/' . $sekolah->gambar) ?>" 
+                                                alt="<?= $sekolah->gambar ?>" 
+                                                class="img-fluid bordered-image" 
+                                                style="cursor: pointer;"
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#imagePreviewModal">
+                                        </div>
+                                    </div>
                                     <div class="d-flex p-2 text-white">
                                         <div>
                                             <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
@@ -91,6 +103,19 @@
                         </div>
                     </div> <!-- /row -->
                 </div> <!-- /card -->
+                <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="imagePreviewModalLabel">Preview Sekolah</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <img id="previewImage" src="" class="img-fluid" style="max-height: 400px; object-fit: contain;">
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- /modal -->
             </div>
         </div>
     </div>
@@ -140,5 +165,16 @@
                 <li class="list-group-item text-muted"><span class="fw-bold">Alamat : </span><?= ucwords($sekolah->sek_alamat) ?></li>
             </ul>
             `).addTo(map).openPopup();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const image = document.querySelector("img[data-bs-toggle='modal']");
+        const modalImage = document.getElementById("previewImage");
+
+        image.addEventListener("click", function () {
+            modalImage.src = this.src;
+        });
+    });
 </script>
 <?= $this->endSection() ?>

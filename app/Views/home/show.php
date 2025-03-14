@@ -12,6 +12,7 @@
 
 <head>
     <?= $this->include('home/_head') ?>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body class="index-page bg-gray-200">
@@ -54,6 +55,17 @@
                             <div class="p-5 ps-sm-8 position-relative text-start my-auto z-index-2">
                                 <h5 class="text-white">(<?= $sekolah->sek_npsn ?>) <br /> <?= strtoupper($sekolah->sek_nama) ?></h5>
                                 <p class="text-white opacity-8 mb-4 font-weight-bold text-sm"><?= strtoupper($sekolah->sek_jenjang) ?> / Sederajat <?= ucwords($sekolah->sek_status) ?> <br /> Akreditasi : <?= strtoupper($sekolah->det_akreditasi) ?> | Kurikulum : <?= strtoupper($sekolah->det_kurikulum) ?></p>
+                                <div class="d-flex p-2 text-white">
+                                    <div class="ps-3 border-container">
+                                        <!-- Gambar dengan event onclick -->
+                                        <img src="<?= base_url('uploads/sekolah/' . $sekolah->gambar) ?>" 
+                                            alt="<?= $sekolah->gambar ?>" 
+                                            class="img-fluid bordered-image" 
+                                            style="cursor: pointer;"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#imagePreviewModal">
+                                    </div>
+                                </div>
                                 <div class="d-flex p-2 text-white">
                                     <div>
                                         <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
@@ -121,6 +133,19 @@
                     </div>
                 </div> <!-- /row -->
             </div> <!-- /card -->
+            <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="imagePreviewModalLabel">Preview Sekolah</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img id="previewImage" src="" class="img-fluid" style="max-height: 400px; object-fit: contain;">
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- /modal -->
         </div> <!-- /container -->
     </section> <!-- /pt-5 mt-5 -->
 
@@ -174,8 +199,16 @@
             </ul>
             `).addTo(map).openPopup();
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const image = document.querySelector("img[data-bs-toggle='modal']");
+            const modalImage = document.getElementById("previewImage");
 
-
+            image.addEventListener("click", function () {
+                modalImage.src = this.src;
+            });
+        });
+    </script>
 </body>
-
 </html>

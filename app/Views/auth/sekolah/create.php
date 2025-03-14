@@ -163,6 +163,24 @@
                             <?= validation_show_error('det_website'); ?>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label>Gambar Sekolah</label>
+                        <input type="file" class="form-control <?= (validation_show_error('gambar')) ? 'is-invalid' : ''; ?>" id="gambar" required name="gambar" autofocus value="<?= old('gambar'); ?>">
+                        <div class="invalid-feedback">
+                            <?= validation_show_error('gambar'); ?>
+                        </div>
+                        <small class="text-xs fw-bold text-danger">* Gambar harus berformat jpg, jpeg, png, atau gif.</small>
+                        <script>
+                            var input = document.getElementById('gambar');
+                            input.addEventListener('input', function() {
+                                if (input.files[0].size > 5000000) {
+                                    input.setCustomValidity('Ukuran gambar tidak boleh lebih dari 5mb');
+                                } else {
+                                    input.setCustomValidity('');
+                                }
+                            });
+                        </script>   
+                    </div>
                     <button type="submit" class="btn btn-sm btn-primary mt-3 mb-0">Simpan</button>
                 </form>
             </div>

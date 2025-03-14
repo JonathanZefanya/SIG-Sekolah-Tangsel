@@ -7,6 +7,7 @@
             </div>
         </div>
     </div>
+
     <!-- Keterangan Icon Map -->
     <div class="container mt-3">
         <div class="row">
@@ -29,10 +30,11 @@
             </div>
         </div>
     </div>
+    
 </section>
 
 <script>
-    const map = L.map('map', { attributionControl: false }).setView([-6.295326, 106.6259098], 12);
+    const map = L.map('map', { attributionControl: false }).setView([-6.295503, 106.7083125], 12);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
     if (navigator.geolocation) {
@@ -43,7 +45,7 @@
 
     function showPosition(position) {
         L.marker([position.coords.latitude, position.coords.longitude])
-            .bindPopup('Posisi Anda!')
+            .bindPopup('Posisi Kamu')
             .addTo(map);
     }
 

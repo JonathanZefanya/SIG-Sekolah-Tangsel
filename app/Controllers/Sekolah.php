@@ -93,6 +93,9 @@ class Sekolah extends BaseController
             'det_website' => [
                 'rules'  => 'required',
             ],
+            'gambar' => [
+                'rules'  => 'uploaded[gambar]|max_size[gambar,5024]|is_image[gambar]|mime_in[gambar,image/jpg,image/jpeg,image/png]',
+            ],
         ]);
         if (!$validation) {
             return redirect()->to('/sekolah/create')->withInput();
@@ -102,6 +105,12 @@ class Sekolah extends BaseController
         } else {
             $user_id = NULL;
         }
+
+        // Handle Upload File
+        $gambar = $this->request->getFile('gambar');
+        $gambarNama = $gambar->getRandomName();
+        $gambar->move('uploads/sekolah', $gambarNama); // Simpan ke public/uploads/sekolah
+
         $this->sekolah->insert([
             'sek_npsn' => $this->request->getPost('sek_npsn'),
             'user_id' => $user_id,
@@ -121,6 +130,7 @@ class Sekolah extends BaseController
             'det_akreditasi' => $this->request->getPost('det_akreditasi'),
             'det_kurikulum' => $this->request->getPost('det_kurikulum'),
             'det_website' => $this->request->getPost('det_website'),
+            'gambar' => $gambarNama,
         ]);
         session()->setFlashdata('message', 'Data sekolah berhasil ditambahkan.');
         return redirect()->to('/sekolah');
@@ -179,6 +189,9 @@ class Sekolah extends BaseController
             'det_website' => [
                 'rules'  => 'required',
             ],
+            'gambar' => [
+                'rules'  => 'max_size[gambar,5024]|is_image[gambar]|mime_in[gambar,image/jpg,image/jpeg,image/png]',
+            ],
         ]);
         if (!$validation) {
             return redirect()->to('/sekolah/edit/' . $id)->withInput();
@@ -189,6 +202,24 @@ class Sekolah extends BaseController
         } else {
             $user_id = NULL;
         }
+
+        // Ambil data lama
+$oldData = $this->detail_sekolah->where('sek_npsn', $id)->first();
+
+// Cek apakah ada file gambar baru diunggah
+$gambar = $this->request->getFile('gambar');
+if ($gambar && $gambar->isValid() && !$gambar->hasMoved()) {
+    $newName = $gambar->getRandomName();
+    $gambar->move('uploads/sekolah', $newName); // Simpan gambar baru
+
+    // Hapus gambar lama jika ada
+    if ($oldData && !empty($oldData->gambar) && file_exists('uploads/sekolah/' . $oldData->gambar)) {
+        unlink('uploads/sekolah/' . $oldData->gambar);
+    }
+} else {
+    $newName = $this->request->getPost('gambar_lama'); // Gunakan gambar lama jika tidak ada yang baru
+}
+
         $this->sekolah->update($id, [
             'sek_npsn' => $this->request->getPost('sek_npsn'),
             'user_id' => $user_id,
@@ -208,18 +239,35 @@ class Sekolah extends BaseController
             'det_akreditasi' => $this->request->getPost('det_akreditasi'),
             'det_kurikulum' => $this->request->getPost('det_kurikulum'),
             'det_website' => $this->request->getPost('det_website'),
+            'gambar' => $newName,
         ]);
         session()->setFlashdata('message', 'Data sekolah berhasil dirubah.');
         return redirect()->to('/sekolah');
     }
     public function delete($id)
     {
+        // Ambil data detail sekolah
         $detail_sekolah = $this->detail_sekolah->where('sek_npsn', $id)->first();
         $sekolah = $this->sekolah->where('sek_npsn', $id)->first();
-        $this->detail_sekolah->delete($detail_sekolah->sek_npsn);
-        // unlink('assets/images/sekolah/' . $sekolah->sek_foto);
-        $this->sekolah->delete($id);
+
+        // Pastikan data ditemukan sebelum menghapus
+        if ($detail_sekolah) {
+            // Hapus gambar jika ada
+            if (!empty($detail_sekolah->gambar) && file_exists('uploads/sekolah/' . $detail_sekolah->gambar)) {
+                unlink('uploads/sekolah/' . $detail_sekolah->gambar);
+            }
+
+            // Hapus data dari tabel detail_sekolah
+            $this->detail_sekolah->delete($detail_sekolah->sek_npsn);
+        }
+
+        // Hapus data dari tabel sekolah jika ada
+        if ($sekolah) {
+            $this->sekolah->delete($id);
+        }
+
         session()->setFlashdata('message', 'Data sekolah berhasil dihapus');
         return redirect()->to('/sekolah');
     }
+
 }

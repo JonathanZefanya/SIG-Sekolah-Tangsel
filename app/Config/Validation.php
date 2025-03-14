@@ -41,4 +41,11 @@ class Validation extends BaseConfig
     // --------------------------------------------------------------------
     // Rules
     // --------------------------------------------------------------------
+
+    public $imageRules = [
+        'image' => [
+            'label' => 'Image',
+            'rules' => 'uploaded[image]|is_image[image]|max_size[image,5048]|mime_in[image,image/png,image/jpg,image/jpeg]'
+        ]
+    ];    
 }
