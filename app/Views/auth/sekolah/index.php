@@ -6,16 +6,26 @@
 <div class="row">
     <div class="col-12">
         <div class="card mb-4">
-            <div class="card-header d-flex flex-md-row flex-column justify-content-between align-items-center pb-0">
+            <div class="card-header d-flex flex-wrap justify-content-between align-items-center pb-0">
                 <h6>Data Sekolah</h6>
-                <?php if (session()->get('user_akses') != 'sekolah') : ?>
-                    <a href="<?= site_url('sekolah/create') ?>" class="btn btn-sm btn-primary">Tambah Data</a>
-                <?php endif ?>
-                <?php if (session()->get('user_akses') == 'sekolah') : ?>
-                    <?php if ($sekolah == null) : ?>
+                <div class="d-flex gap-2 flex-wrap">
+                    <?php if (session()->get('user_akses') != 'sekolah') : ?>
                         <a href="<?= site_url('sekolah/create') ?>" class="btn btn-sm btn-primary">Tambah Data</a>
-                    <?php endif; ?>
-                <?php endif ?>
+                        <a href="<?= site_url('sekolah/import') ?>" class="btn btn-sm btn-success">Import Data</a>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-warning dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                Export Excel
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                                <li><a class="dropdown-item" href="<?= site_url('sekolah/export') ?>">Export Sekolah</a></li>
+                                <li><a class="dropdown-item" href="<?= site_url('detail-sekolah/export') ?>">Export Detail Sekolah</a></li>
+                            </ul>
+                        </div>
+                    <?php endif ?>
+                    <?php if (session()->get('user_akses') == 'sekolah' && $sekolah == null) : ?>
+                        <a href="<?= site_url('sekolah/create') ?>" class="btn btn-sm btn-primary">Tambah Data</a>
+                    <?php endif ?>
+                </div>
             </div>
             <div class="card-body">
                 <?php if (!empty(session()->getFlashdata('message'))) : ?>
@@ -35,7 +45,7 @@
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nama</th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kecamatan</th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kelurahan</th>
-                                <th class="text-secondary opacity-7"></th>
+                                <th class="text-secondary text-xxs font-weight-bolder opacity-7">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>

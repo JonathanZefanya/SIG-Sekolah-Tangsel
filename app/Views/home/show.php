@@ -12,7 +12,6 @@
 
 <head>
     <?= $this->include('home/_head') ?>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body class="index-page bg-gray-200">
@@ -138,7 +137,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="imagePreviewModalLabel">Preview Sekolah</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn btn-close bg-gradient-primary mb-0 me-1 mt-2 mt-md-0" data-bs-dismiss="modal" aria-label="Close">X</button>
                         </div>
                         <div class="modal-body text-center">
                             <img id="previewImage" src="" class="img-fluid" style="max-height: 400px; object-fit: contain;">

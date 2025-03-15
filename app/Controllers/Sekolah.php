@@ -8,6 +8,9 @@ use App\Models\KecamatanModel;
 use App\Models\KelurahanModel;
 use App\Models\SekolahModel;
 use App\Models\User;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class Sekolah extends BaseController
 {
@@ -204,21 +207,21 @@ class Sekolah extends BaseController
         }
 
         // Ambil data lama
-$oldData = $this->detail_sekolah->where('sek_npsn', $id)->first();
+        $oldData = $this->detail_sekolah->where('sek_npsn', $id)->first();
 
-// Cek apakah ada file gambar baru diunggah
-$gambar = $this->request->getFile('gambar');
-if ($gambar && $gambar->isValid() && !$gambar->hasMoved()) {
-    $newName = $gambar->getRandomName();
-    $gambar->move('uploads/sekolah', $newName); // Simpan gambar baru
+        // Cek apakah ada file gambar baru diunggah
+        $gambar = $this->request->getFile('gambar');
+        if ($gambar && $gambar->isValid() && !$gambar->hasMoved()) {
+            $newName = $gambar->getRandomName();
+            $gambar->move('uploads/sekolah', $newName); // Simpan gambar baru
 
-    // Hapus gambar lama jika ada
-    if ($oldData && !empty($oldData->gambar) && file_exists('uploads/sekolah/' . $oldData->gambar)) {
-        unlink('uploads/sekolah/' . $oldData->gambar);
-    }
-} else {
-    $newName = $this->request->getPost('gambar_lama'); // Gunakan gambar lama jika tidak ada yang baru
-}
+            // Hapus gambar lama jika ada
+            if ($oldData && !empty($oldData->gambar) && file_exists('uploads/sekolah/' . $oldData->gambar)) {
+                unlink('uploads/sekolah/' . $oldData->gambar);
+            }
+        } else {
+            $newName = $this->request->getPost('gambar_lama'); // Gunakan gambar lama jika tidak ada yang baru
+        }
 
         $this->sekolah->update($id, [
             'sek_npsn' => $this->request->getPost('sek_npsn'),
@@ -268,6 +271,153 @@ if ($gambar && $gambar->isValid() && !$gambar->hasMoved()) {
 
         session()->setFlashdata('message', 'Data sekolah berhasil dihapus');
         return redirect()->to('/sekolah');
+    }
+
+    public function import()
+    {
+        $fileSekolah = $this->request->getFile('file_excel_sekolah');
+        $fileDetail = $this->request->getFile('file_excel_detail');
+
+        if ($fileSekolah->isValid() && !$fileSekolah->hasMoved() && $fileDetail->isValid() && !$fileDetail->hasMoved()) {
+            $spreadsheetSekolah = IOFactory::load($fileSekolah->getTempName());
+            $spreadsheetDetail = IOFactory::load($fileDetail->getTempName());
+
+            $sheetSekolah = $spreadsheetSekolah->getActiveSheet();
+            $dataSekolah = $sheetSekolah->toArray();
+
+            $sheetDetail = $spreadsheetDetail->getActiveSheet();
+            $dataDetail = $sheetDetail->toArray();
+
+            // Import Data Sekolah
+            foreach ($dataSekolah as $key => $row) {
+                if ($key == 0) continue; // Skip header
+                
+                $kelurahanExists = $this->kelurahan->where('kel_id', $row[5])->first();
+                if (!$kelurahanExists) {
+                    return redirect()->to('/sekolah/import')->with('error', 'Data kelurahan tidak ditemukan.');
+                }
+
+                $this->sekolah->insert([
+                    'sek_npsn' => $row[0],
+                    'sek_nama' => strtolower($row[1]),
+                    'sek_status' => $row[2],
+                    'sek_jenjang' => $row[3],
+                    'sek_alamat' => strtolower($row[4]),
+                    'kel_id' => $row[5],
+                    'kec_id' => $row[6],
+                    'sek_lokasi' => $row[7],
+                ]);
+            }
+
+            // Import Detail Sekolah
+            foreach ($dataDetail as $key => $row) {
+                if ($key == 0) continue; // Skip header
+
+                $this->detail_sekolah->insert([
+                    'det_id' => $row[0],
+                    'sek_npsn' => $row[1],
+                    'det_guru' => $row[2],
+                    'det_siswa_p' => $row[3],
+                    'det_siswa_l' => $row[4],
+                    'det_akreditasi' => $row[5],
+                    'det_kurikulum' => $row[6],
+                    'det_website' => $row[7] ?? "-",
+                    'gambar' => $row[8] ?? null,
+                ]);
+            }
+
+            return redirect()->to('/sekolah')->with('message', 'Data berhasil diimpor.');
+        }
+
+        return redirect()->to('/sekolah/import')->with('error', 'File tidak valid.');
+    }
+
+    public function importPage()
+    {
+        return view('auth/sekolah/import');
+    }
+    public function export()
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue('A1', 'NPSN');
+        $sheet->setCellValue('B1', 'Nama');
+        $sheet->setCellValue('C1', 'Status');
+        $sheet->setCellValue('D1', 'Jenjang');
+        $sheet->setCellValue('E1', 'Alamat');
+        $sheet->setCellValue('F1', 'Kelurahan');
+        $sheet->setCellValue('G1', 'Kecamatan');
+        $sheet->setCellValue('H1', 'Lokasi');
+
+        $sekolahData = $this->sekolah->findAll();
+        $rowIndex = 2;
+
+        foreach ($sekolahData as $data) {
+            $data = (array) $data; // Konversi object ke array
+            $sheet->setCellValue('A' . $rowIndex, $data['sek_npsn']);
+            $sheet->setCellValue('B' . $rowIndex, $data['sek_nama']);
+            $sheet->setCellValue('C' . $rowIndex, $data['sek_status']);
+            $sheet->setCellValue('D' . $rowIndex, $data['sek_jenjang']);
+            $sheet->setCellValue('E' . $rowIndex, $data['sek_alamat']);
+            $sheet->setCellValue('F' . $rowIndex, $data['kel_id']);
+            $sheet->setCellValue('G' . $rowIndex, $data['kec_id']);
+            $sheet->setCellValue('H' . $rowIndex, $data['sek_lokasi']);
+            $rowIndex++;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'Data_Sekolah_' . date('Y-m-d') . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        $writer->save('php://output');
+        exit;
+    }
+
+    public function exportDetailSekolah()
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set header kolom
+        $sheet->setCellValue('A1', 'id');
+        $sheet->setCellValue('B1', 'NPSN');
+        $sheet->setCellValue('C1', 'Jumlah Guru');
+        $sheet->setCellValue('D1', 'Siswa Perempuan');
+        $sheet->setCellValue('E1', 'Siswa Laki-Laki');
+        $sheet->setCellValue('F1', 'Akreditasi');
+        $sheet->setCellValue('G1', 'Kurikulum');
+        $sheet->setCellValue('H1', 'Website');
+        $sheet->setCellValue('I1', 'Gambar');
+
+        // Ambil data dari tabel detail_sekolah
+        $detailData = $this->detail_sekolah->findAll();
+        $rowIndex = 2;
+
+        foreach ($detailData as $data) {
+            $data = (array) $data; // Konversi object ke array
+            $sheet->setCellValue('A' . $rowIndex, $data['det_id']);
+            $sheet->setCellValue('B' . $rowIndex, $data['sek_npsn']);
+            $sheet->setCellValue('C' . $rowIndex, $data['det_guru']);
+            $sheet->setCellValue('D' . $rowIndex, $data['det_siswa_p']);
+            $sheet->setCellValue('E' . $rowIndex, $data['det_siswa_l']);
+            $sheet->setCellValue('F' . $rowIndex, $data['det_akreditasi']);
+            $sheet->setCellValue('G' . $rowIndex, $data['det_kurikulum']);
+            $sheet->setCellValue('H' . $rowIndex, $data['det_website'] ?? '-');
+            $sheet->setCellValue('I' . $rowIndex, $data['gambar']);
+            $rowIndex++;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'Detail_Sekolah_' . date('Y-m-d') . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        $writer->save('php://output');
+        exit;
     }
 
 }

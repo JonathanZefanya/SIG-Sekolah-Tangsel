@@ -73,6 +73,12 @@ $routes->group('', ['filter' => 'notloggedin'], function ($routes) {
     $routes->get('sekolah/edit/(:segment)', 'Sekolah::edit/$1');
     $routes->post('sekolah/update/(:segment)', 'Sekolah::update/$1');
     $routes->get('sekolah/delete/(:segment)', 'Sekolah::delete/$1');
+    $routes->get('sekolah/export', 'Sekolah::export');
+    $routes->get('detail-sekolah/export', 'Sekolah::exportDetailSekolah');
+    $routes->get('sekolah/import', 'Sekolah::importPage');
+    $routes->get('detail-sekolah/import', 'Sekolah::importDetailPage');
+    $routes->post('sekolah/import', 'Sekolah::import');
+    $routes->post('detail-sekolah/import', 'Sekolah::importDetailSekolah');
 
     // Get Data Kelurahan
     $routes->post('sekolah/getkelurahan', 'AddSekolah::getData');
