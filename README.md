@@ -56,8 +56,7 @@
 - 🛣️ Gunakan fitur **rute** untuk menemukan jalur menuju sekolah dari lokasi Anda.
 
 ## 📋 TO-DO List
-1. 📥 Mengimport Data Sekolah Via Excel ❌
-2. 👩🏻‍💻 Menambahkan AI untuk analisis data sekolah ❌
+1. 👩🏻‍💻 Menambahkan AI untuk analisis data sekolah ❌
 
 ## 🤝 Kontribusi
 Jika ingin berkontribusi, silakan **fork** repository ini dan ajukan **pull request** dengan perubahan yang Anda buat.
