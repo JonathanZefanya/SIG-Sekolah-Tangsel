@@ -55,8 +55,15 @@
 - 📌 Klik pada **marker peta** untuk melihat **detail sekolah**.
 - 🛣️ Gunakan fitur **rute** untuk menemukan jalur menuju sekolah dari lokasi Anda.
 
+## 📋 TO-DO List
+1. 📥 Mengimport Data Sekolah Via Excel ❌
+2. 👩🏻‍💻 Menambahkan AI untuk analisis data sekolah ❌
+
 ## 🤝 Kontribusi
 Jika ingin berkontribusi, silakan **fork** repository ini dan ajukan **pull request** dengan perubahan yang Anda buat.
 
 ## 📜 Lisensi
 Proyek ini dilisensikan di bawah **[MIT License](LICENSE)**.
+
+## 👀 Source Emot
+[Click Here 💡](https://emojidb.org/task-emojis)
