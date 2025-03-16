@@ -274,63 +274,113 @@ class Sekolah extends BaseController
     }
 
     public function import()
-    {
-        $fileSekolah = $this->request->getFile('file_excel_sekolah');
-        $fileDetail = $this->request->getFile('file_excel_detail');
+{
+    $fileSekolah = $this->request->getFile('file_excel_sekolah');
+    $fileDetail = $this->request->getFile('file_excel_detail');
 
-        if ($fileSekolah->isValid() && !$fileSekolah->hasMoved() && $fileDetail->isValid() && !$fileDetail->hasMoved()) {
-            $spreadsheetSekolah = IOFactory::load($fileSekolah->getTempName());
-            $spreadsheetDetail = IOFactory::load($fileDetail->getTempName());
+    if ($fileSekolah->isValid() && !$fileSekolah->hasMoved() && $fileDetail->isValid() && !$fileDetail->hasMoved()) {
+        $spreadsheetSekolah = IOFactory::load($fileSekolah->getTempName());
+        $spreadsheetDetail = IOFactory::load($fileDetail->getTempName());
 
-            $sheetSekolah = $spreadsheetSekolah->getActiveSheet();
-            $dataSekolah = $sheetSekolah->toArray();
+        $sheetSekolah = $spreadsheetSekolah->getActiveSheet();
+        $dataSekolah = $sheetSekolah->toArray();
 
-            $sheetDetail = $spreadsheetDetail->getActiveSheet();
-            $dataDetail = $sheetDetail->toArray();
+        $sheetDetail = $spreadsheetDetail->getActiveSheet();
+        $dataDetail = $sheetDetail->toArray();
 
-            // Import Data Sekolah
-            foreach ($dataSekolah as $key => $row) {
-                if ($key == 0) continue; // Skip header
-                
-                $kelurahanExists = $this->kelurahan->where('kel_id', $row[5])->first();
-                if (!$kelurahanExists) {
-                    return redirect()->to('/sekolah/import')->with('error', 'Data kelurahan tidak ditemukan.');
-                }
+        $errors = [];
 
-                $this->sekolah->insert([
-                    'sek_npsn' => $row[0],
-                    'sek_nama' => strtolower($row[1]),
-                    'sek_status' => $row[2],
-                    'sek_jenjang' => $row[3],
-                    'sek_alamat' => strtolower($row[4]),
-                    'kel_id' => $row[5],
-                    'kec_id' => $row[6],
-                    'sek_lokasi' => $row[7],
-                ]);
+        // =======================
+        // 🚀 Import Data Sekolah
+        // =======================
+        foreach ($dataSekolah as $key => $row) {
+            if ($key == 0) continue; // Skip header
+
+            // Pastikan format data benar
+            if (empty($row[0]) || empty($row[1]) || empty($row[2]) || empty($row[3]) || empty($row[4]) || empty($row[5]) || empty($row[6]) || empty($row[7])) {
+                $errors[] = "Baris " . ($key + 1) . " di Data Sekolah memiliki format tidak sesuai.";
+                continue;
             }
 
-            // Import Detail Sekolah
-            foreach ($dataDetail as $key => $row) {
-                if ($key == 0) continue; // Skip header
-
-                $this->detail_sekolah->insert([
-                    'det_id' => $row[0],
-                    'sek_npsn' => $row[1],
-                    'det_guru' => $row[2],
-                    'det_siswa_p' => $row[3],
-                    'det_siswa_l' => $row[4],
-                    'det_akreditasi' => $row[5],
-                    'det_kurikulum' => $row[6],
-                    'det_website' => $row[7] ?? "-",
-                    'gambar' => $row[8] ?? null,
-                ]);
+            // Cek apakah NPSN sudah ada di database
+            $existingSekolah = $this->sekolah->where('sek_npsn', $row[0])->first();
+            if ($existingSekolah) {
+                $errors[] = "NPSN " . $row[0] . " sudah terdaftar di database.";
+                continue;
             }
 
-            return redirect()->to('/sekolah')->with('message', 'Data berhasil diimpor.');
+            // Cek apakah kelurahan ada di database
+            $kelurahanExists = $this->kelurahan->where('kel_id', $row[5])->first();
+            if (!$kelurahanExists) {
+                $errors[] = "Kelurahan ID " . $row[5] . " tidak ditemukan.";
+                continue;
+            }
+
+            // Insert data ke tabel sekolah
+            $this->sekolah->insert([
+                'sek_npsn' => $row[0],
+                'sek_nama' => strtolower($row[1]),
+                'sek_status' => $row[2],
+                'sek_jenjang' => $row[3],
+                'sek_alamat' => strtolower($row[4]),
+                'kel_id' => $row[5],
+                'kec_id' => $row[6],
+                'sek_lokasi' => $row[7],
+            ]);
         }
 
-        return redirect()->to('/sekolah/import')->with('error', 'File tidak valid.');
+        // ==============================
+        // 🚀 Import Data Detail Sekolah
+        // ==============================
+        foreach ($dataDetail as $key => $row) {
+            if ($key == 0) continue; // Skip header
+
+            // Pastikan format data benar
+            if (empty($row[0]) || empty($row[1]) || empty($row[2]) || empty($row[3]) || empty($row[4]) || empty($row[5]) || empty($row[6])) {
+                $errors[] = "Baris " . ($key + 1) . " di Data Detail Sekolah memiliki format tidak sesuai.";
+                continue;
+            }
+
+            // Cek apakah NPSN ada di tabel sekolah
+            $existingSekolah = $this->sekolah->where('sek_npsn', $row[1])->first();
+            if (!$existingSekolah) {
+                $errors[] = "NPSN " . $row[1] . " tidak ditemukan di tabel sekolah.";
+                continue;
+            }
+
+            // Cek apakah detail sekolah untuk NPSN sudah ada
+            $existingDetail = $this->detail_sekolah->where('sek_npsn', $row[1])->first();
+            if ($existingDetail) {
+                $errors[] = "Detail untuk NPSN " . $row[1] . " sudah ada.";
+                continue;
+            }
+
+            // Insert data ke tabel detail_sekolah
+            $this->detail_sekolah->insert([
+                'det_id' => $row[0],
+                'sek_npsn' => $row[1],
+                'det_guru' => $row[2],
+                'det_siswa_p' => $row[3],
+                'det_siswa_l' => $row[4],
+                'det_akreditasi' => $row[5],
+                'det_kurikulum' => $row[6],
+                'det_website' => $row[7] ?? "-",
+                'gambar' => $row[8] ?? null,
+            ]);
+        }
+
+        // =======================
+        // ✅ Beri Feedback Import
+        // =======================
+        if (!empty($errors)) {
+            return redirect()->to('/sekolah/import')->with('error', implode("<br>", $errors));
+        }
+
+        return redirect()->to('/sekolah')->with('message', 'Data berhasil diimpor.');
     }
+
+    return redirect()->to('/sekolah/import')->with('error', 'File tidak valid.');
+}
 
     public function importPage()
     {
@@ -406,7 +456,7 @@ class Sekolah extends BaseController
             $sheet->setCellValue('F' . $rowIndex, $data['det_akreditasi']);
             $sheet->setCellValue('G' . $rowIndex, $data['det_kurikulum']);
             $sheet->setCellValue('H' . $rowIndex, $data['det_website'] ?? '-');
-            $sheet->setCellValue('I' . $rowIndex, $data['gambar']);
+            $sheet->setCellValue('I' . $rowIndex, $data['gambar'] ?? null);
             $rowIndex++;
         }
 
