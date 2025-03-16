@@ -51,6 +51,7 @@ class AddDetailSekolah extends Migration
             'gambar' => [
                 'type'           => 'VARCHAR',
                 'constraint'     => 50,
+                'null'           => true,
             ],
         ]);
         $this->forge->addKey('det_id', true);
