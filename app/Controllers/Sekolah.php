@@ -415,7 +415,7 @@ class Sekolah extends BaseController
         $sheet = $spreadsheet->getActiveSheet();
 
         // Set header kolom
-        $sheet->setCellValue('A1', 'id');
+        $sheet->setCellValue('A1', 'No');
         $sheet->setCellValue('B1', 'NPSN');
         $sheet->setCellValue('C1', 'Jumlah Guru');
         $sheet->setCellValue('D1', 'Siswa Perempuan');
