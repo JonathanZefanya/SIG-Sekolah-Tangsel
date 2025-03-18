@@ -6,18 +6,18 @@
                 <!-- Filter berdasarkan Jenjang -->
                 <div class="row mt-3">
                     <div class="col-12">
-                        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                            <label class="btn btn-outline-primary" for="btnradio1" onclick="filterJenjang('')">Semua</label>
-
+                        <div class="btn-group d-flex flex-wrap" role="group" aria-label="Basic radio toggle button group">
                             <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-                            <label class="btn btn-outline-primary" for="btnradio2" onclick="filterJenjang('SD')">SD</label>
+                            <label class="btn btn-outline-primary flex-fill" for="btnradio2" onclick="filterJenjang('SD')">SD</label>
 
                             <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
-                            <label class="btn btn-outline-primary" for="btnradio3" onclick="filterJenjang('SMP')">SMP</label>
+                            <label class="btn btn-outline-primary flex-fill" for="btnradio3" onclick="filterJenjang('SMP')">SMP</label>
 
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off">
-                            <label class="btn btn-outline-primary" for="btnradio4" onclick="filterJenjang('SMA')">SMA</label>
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off" checked>
+                            <label class="btn btn-outline-primary flex-fill" for="btnradio4" onclick="filterJenjang('SMA')">SMA</label>
+
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off">
+                            <label class="btn btn-outline-primary flex-fill" for="btnradio1" onclick="filterJenjang('')">Semua</label>
                         </div>
                     </div>
                 </div>
