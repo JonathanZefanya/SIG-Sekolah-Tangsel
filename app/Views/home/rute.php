@@ -131,7 +131,7 @@
             // Mengatur URL Google Maps untuk navigasi
             const gmapsRouteURL = `https://www.google.com/maps/dir/${userLatLng[0]},${userLatLng[1]}/${destinationLatLng[0]},${destinationLatLng[1]}`;
 
-            // Menambahkan marker untuk sekolah tujuan dengan link 🚗
+            // Menambahkan marker untuk sekolah tujuan
             L.marker(destinationLatLng).addTo(map).bindPopup(`
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item text-primary font-weight-bold"><?= strtoupper($sekolah->sek_nama) ?></li>
