@@ -108,7 +108,18 @@
 
             // Menambahkan marker untuk lokasi pengguna dan tujuan
             L.marker(userLatLng).addTo(map).bindPopup("Lokasi Kamu").openPopup();
-            L.marker(destinationLatLng).addTo(map).bindPopup("Sekolah Tujuan").openPopup();
+            // L.marker(destinationLatLng).addTo(map).bindPopup("Sekolah Tujuan").openPopup();
+
+            // Mengatur URL Google Maps untuk navigasi
+            const gmapsRouteURL = `https://www.google.com/maps/dir/${userLatLng[0]},${userLatLng[1]}/${destinationLatLng[0]},${destinationLatLng[1]}`;
+
+            // Menambahkan marker untuk sekolah tujuan dengan tombol navigasi
+            L.marker(destinationLatLng).addTo(map).bindPopup(`
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item text-primary font-weight-bold"><?= strtoupper($sekolah->sek_nama) ?></li>
+                    <li class="list-group-item fw-bold"><a href="${gmapsRouteURL}" target="_blank">Rute Google Maps<i class="ms-1 fa-solid fa-person-walking-arrow-right"></i></a></li>
+                </ul>
+            `).openPopup();
 
             // Menampilkan garis lurus antara titik awal dan tujuan
             L.polyline([userLatLng, destinationLatLng], { color: 'blue', weight: 3 }).addTo(map);
