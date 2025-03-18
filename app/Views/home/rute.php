@@ -78,6 +78,7 @@
 
     <?= $this->include('home/_script') ?>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const map = L.map('map', {
             attributionControl: false,
@@ -102,6 +103,23 @@
             alert('Geolocation is not supported by this browser.');
         }
 
+        function confirmNavigation(url) {
+            Swal.fire({
+                title: "Buka Google Maps?",
+                text: "Anda akan diarahkan ke aplikasi/tab baru.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, Lanjutkan",
+                cancelButtonText: "Batal"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.open(url, "_blank");
+                }
+            });
+        }
+
         function showPosition(position) {
             const userLatLng = [position.coords.latitude, position.coords.longitude];
             const destinationLatLng = [<?= $sekolah->sek_lokasi ?>];
@@ -113,11 +131,11 @@
             // Mengatur URL Google Maps untuk navigasi
             const gmapsRouteURL = `https://www.google.com/maps/dir/${userLatLng[0]},${userLatLng[1]}/${destinationLatLng[0]},${destinationLatLng[1]}`;
 
-            // Menambahkan marker untuk sekolah tujuan dengan tombol navigasi
+            // Menambahkan marker untuk sekolah tujuan dengan link 🚗
             L.marker(destinationLatLng).addTo(map).bindPopup(`
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item text-primary font-weight-bold"><?= strtoupper($sekolah->sek_nama) ?></li>
-                    <li class="list-group-item fw-bold"><a href="${gmapsRouteURL}" target="_blank">Rute Google Maps<i class="ms-1 fa-solid fa-person-walking-arrow-right"></i></a></li>
+                    <li class="list-group-item fw-bold"><a href="#" onclick="confirmNavigation('${gmapsRouteURL}')" style="text-decoration: none;">Buka Google Maps <i class="ms-1 fa-solid fa-person-walking-arrow-right"></i></a></li>
                 </ul>
             `).openPopup();
 
@@ -132,6 +150,14 @@
 
             // Mengatur tombol Route Gmaps agar membuka rute di Google Maps
             document.getElementById('gmaps-link').href = `https://www.google.com/maps/dir/${userLatLng[0]},${userLatLng[1]}/${destinationLatLng[0]},${destinationLatLng[1]}`;
+
+            // Mengatur tombol Route Gmaps dengan validasi konfirmasi
+            const gmapsLink = document.getElementById('gmaps-link');
+            gmapsLink.href = "#";
+            gmapsLink.onclick = function () {
+                confirmNavigation(gmapsRouteURL);
+                return false;
+            };
         }
 
         function showError(error) {
