@@ -1,9 +1,26 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.6.0/leaflet.fullscreen.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.6.0/Leaflet.fullscreen.min.js"></script>
+
 <section id="peta" style="padding-top: 100px;">
     <div class="container">
         <div class="row">
             <div class="col-12 mx-auto text-center">
-                <h3 class="mb-3" style="text-transform: uppercase; font-family: 'Poppins'; font-weight: 700; letter-spacing: 0.3rem;">Peta Lokasi Sekolah Di Tangsel</h3>
-                <div class="card" id="map" style="height: 30rem;"></div>
+                <h3 class="mb-3" style="text-transform: uppercase; font-family: 'Poppins'; font-weight: 700; letter-spacing: 0.3rem;">
+                    Peta Lokasi Sekolah Di Tangsel
+                </h3>
+                <div class="card position-relative" id="map-container" style="height: 30rem;">
+                    <div id="map" style="height: 100%;"></div>
+
+                    <!-- Widget Full-Screen -->
+                    <button id="fullScreenMap" class="btn btn-dark widget-btn">
+                        <i class="fa-solid fa-expand"></i> Full Screen
+                    </button>
+
+                    <!-- Widget Reset -->
+                    <button id="resetMap" class="btn btn-danger widget-btn" style="top: 60px;">
+                        <i class="fa-solid fa-undo"></i> Reset Peta
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -33,6 +50,17 @@
     
 </section>
 
+<style>
+    .widget-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1000;
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+</style>
+
 <script>
     const map = L.map('map', { attributionControl: false }).setView([-6.295503, 106.7083125], 12);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -42,6 +70,20 @@
     } else {
         alert('Geolocation is not supported by this browser.');
     }
+
+    // Widget Full-Screen
+    document.getElementById('fullScreenMap').addEventListener('click', function () {
+        if (!document.fullscreenElement) {
+            document.getElementById('map-container').requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    });
+
+    // Widget Reset
+    document.getElementById('resetMap').addEventListener('click', function () {
+        map.setView([-6.295503, 106.7083125], 12);
+    });
 
     function showPosition(position) {
         L.marker([position.coords.latitude, position.coords.longitude])
