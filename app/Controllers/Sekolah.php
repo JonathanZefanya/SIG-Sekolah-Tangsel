@@ -288,13 +288,26 @@ class Sekolah extends BaseController
             $sheetDetail = $spreadsheetDetail->getActiveSheet();
             $dataDetail = $sheetDetail->toArray();
 
-            // Import Data Sekolah
+            $errors = [];
+
             foreach ($dataSekolah as $key => $row) {
-                if ($key == 0) continue; // Skip header
-                
+                if ($key == 0) continue; 
+
+                if (empty($row[0]) || empty($row[1]) || empty($row[2]) || empty($row[3]) || empty($row[4]) || empty($row[5]) || empty($row[6]) || empty($row[7])) {
+                    $errors[] = "Baris " . ($key + 1) . " di Data Sekolah memiliki format tidak sesuai.";
+                    continue;
+                }
+
+                $existingSekolah = $this->sekolah->where('sek_npsn', $row[0])->first();
+                if ($existingSekolah) {
+                    $errors[] = "NPSN " . $row[0] . " sudah terdaftar di database.";
+                    continue;
+                }
+
                 $kelurahanExists = $this->kelurahan->where('kel_id', $row[5])->first();
                 if (!$kelurahanExists) {
-                    return redirect()->to('/sekolah/import')->with('error', 'Data kelurahan tidak ditemukan.');
+                    $errors[] = "Kelurahan ID " . $row[5] . " tidak ditemukan.";
+                    continue;
                 }
 
                 $this->sekolah->insert([
@@ -309,9 +322,25 @@ class Sekolah extends BaseController
                 ]);
             }
 
-            // Import Detail Sekolah
             foreach ($dataDetail as $key => $row) {
-                if ($key == 0) continue; // Skip header
+                if ($key == 0) continue; 
+
+                if (empty($row[0]) || empty($row[1]) || empty($row[2]) || empty($row[3]) || empty($row[4]) || empty($row[5]) || empty($row[6])) {
+                    $errors[] = "Baris " . ($key + 1) . " di Data Detail Sekolah memiliki format tidak sesuai.";
+                    continue;
+                }
+
+                $existingSekolah = $this->sekolah->where('sek_npsn', $row[1])->first();
+                if (!$existingSekolah) {
+                    $errors[] = "NPSN " . $row[1] . " tidak ditemukan di tabel sekolah.";
+                    continue;
+                }
+
+                $existingDetail = $this->detail_sekolah->where('sek_npsn', $row[1])->first();
+                if ($existingDetail) {
+                    $errors[] = "Detail untuk NPSN " . $row[1] . " sudah ada.";
+                    continue;
+                }
 
                 $this->detail_sekolah->insert([
                     'det_id' => $row[0],
@@ -324,6 +353,10 @@ class Sekolah extends BaseController
                     'det_website' => $row[7] ?? "-",
                     'gambar' => $row[8] ?? null,
                 ]);
+            }
+
+            if (!empty($errors)) {
+                return redirect()->to('/sekolah/import')->with('error', implode("<br>", $errors));
             }
 
             return redirect()->to('/sekolah')->with('message', 'Data berhasil diimpor.');
@@ -382,7 +415,7 @@ class Sekolah extends BaseController
         $sheet = $spreadsheet->getActiveSheet();
 
         // Set header kolom
-        $sheet->setCellValue('A1', 'id');
+        $sheet->setCellValue('A1', 'No');
         $sheet->setCellValue('B1', 'NPSN');
         $sheet->setCellValue('C1', 'Jumlah Guru');
         $sheet->setCellValue('D1', 'Siswa Perempuan');
@@ -406,7 +439,7 @@ class Sekolah extends BaseController
             $sheet->setCellValue('F' . $rowIndex, $data['det_akreditasi']);
             $sheet->setCellValue('G' . $rowIndex, $data['det_kurikulum']);
             $sheet->setCellValue('H' . $rowIndex, $data['det_website'] ?? '-');
-            $sheet->setCellValue('I' . $rowIndex, $data['gambar']);
+            $sheet->setCellValue('I' . $rowIndex, $data['gambar'] ?? null);
             $rowIndex++;
         }
 
