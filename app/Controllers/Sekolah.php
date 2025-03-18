@@ -97,7 +97,7 @@ class Sekolah extends BaseController
                 'rules'  => 'required',
             ],
             'gambar' => [
-                'rules'  => 'uploaded[gambar]|max_size[gambar,5024]|is_image[gambar]|mime_in[gambar,image/jpg,image/jpeg,image/png]',
+                'rules'  => 'max_size[gambar,5024]|is_image[gambar]|mime_in[gambar,image/jpg,image/jpeg,image/png]',
             ],
         ]);
         if (!$validation) {
@@ -109,10 +109,14 @@ class Sekolah extends BaseController
             $user_id = NULL;
         }
 
-        // Handle Upload File
+        // Handle Upload Gambar (Opsional)
         $gambar = $this->request->getFile('gambar');
-        $gambarNama = $gambar->getRandomName();
-        $gambar->move('uploads/sekolah', $gambarNama); // Simpan ke public/uploads/sekolah
+        $gambarNama = null;
+
+        if ($gambar && $gambar->isValid() && !$gambar->hasMoved()) {
+            $gambarNama = $gambar->getRandomName();
+            $gambar->move('uploads/sekolah', $gambarNama);
+        }
 
         $this->sekolah->insert([
             'sek_npsn' => $this->request->getPost('sek_npsn'),

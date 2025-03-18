@@ -147,15 +147,16 @@
                     </div>
                     <div class="form-group">
                         <label>Website Sekolah</label>
-                        <input type="text" class="form-control <?= (validation_show_error('det_website')) ? 'is-invalid' : ''; ?>" id="det_website" required placeholder="https://www.sekolah.sch.id" name="det_website" autofocus value="<?= old('det_website'); ?>">
+                        <input type="text" class="form-control <?= (validation_show_error('det_website')) ? 'is-invalid' : ''; ?>"
+                            id="det_website" required placeholder="https://www.sekolah.sch.id" name="det_website" autofocus
+                            value="<?= old('det_website'); ?>" pattern="(https?:\/\/.*|-)">
                         <small class="text-xs fw-bold text-danger">* Jika Website tidak ada maka gunakan tanda "-".</small>
                         <script>
-                            var input = document.getElementById('det_website');
-                            input.addEventListener('input', function() {
-                                if (input.value.includes('http://') || input.value.includes('https://') || input.value == '-') {
-                                    input.setCustomValidity('');
+                            document.getElementById('det_website').addEventListener('input', function() {
+                                if (this.value.match(/^(https?:\/\/|-)$/)) {
+                                    this.setCustomValidity('');
                                 } else {
-                                    input.setCustomValidity('URL harus diawali dengan http:// atau https:// atau "-" jika tidak ada website');
+                                    this.setCustomValidity('URL harus diawali dengan http:// atau https:// atau "-" jika tidak ada website');
                                 }
                             });
                         </script>
@@ -163,23 +164,32 @@
                             <?= validation_show_error('det_website'); ?>
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label>Gambar Sekolah</label>
-                        <input type="file" class="form-control <?= (validation_show_error('gambar')) ? 'is-invalid' : ''; ?>" id="gambar" required name="gambar" autofocus value="<?= old('gambar'); ?>">
+                        <label>Gambar Sekolah (Opsional)</label>
+                        <input type="file" class="form-control <?= (validation_show_error('gambar')) ? 'is-invalid' : ''; ?>" id="gambar" name="gambar"
+                            accept=".jpg, .jpeg, .png, .gif">
                         <div class="invalid-feedback">
                             <?= validation_show_error('gambar'); ?>
                         </div>
                         <small class="text-xs fw-bold text-danger">* Gambar harus berformat jpg, jpeg, png, atau gif.</small>
                         <script>
-                            var input = document.getElementById('gambar');
-                            input.addEventListener('input', function() {
-                                if (input.files[0].size > 5000000) {
-                                    input.setCustomValidity('Ukuran gambar tidak boleh lebih dari 5mb');
+                            document.getElementById('gambar').addEventListener('change', function() {
+                                var file = this.files[0];
+                                if (file) {
+                                    var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+                                    if (!allowedExtensions.test(file.name)) {
+                                        this.setCustomValidity('Format gambar tidak valid. Gunakan jpg, jpeg, png, atau gif.');
+                                    } else if (file.size > 5000000) {
+                                        this.setCustomValidity('Ukuran gambar tidak boleh lebih dari 5MB');
+                                    } else {
+                                        this.setCustomValidity('');
+                                    }
                                 } else {
-                                    input.setCustomValidity('');
+                                    this.setCustomValidity('');
                                 }
                             });
-                        </script>   
+                        </script>
                     </div>
                     <button type="submit" class="btn btn-sm btn-primary mt-3 mb-0">Simpan</button>
                 </form>
