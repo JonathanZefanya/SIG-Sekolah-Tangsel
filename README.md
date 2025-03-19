@@ -58,6 +58,9 @@
 ## 📋 TO-DO List
 1. 👩🏻‍💻 Menambahkan AI untuk analisis data sekolah ❌
 
+## 📑 Laporan
+📄 **[Laporan,Porposal,PPT Proyek](https://drive.google.com/drive/u/3/folders/1S2_OXA6j0q4qzbtuXX9pk6DwuF49yx3O)**
+
 ## 🤝 Kontribusi
 Jika ingin berkontribusi, silakan **fork** repository ini dan ajukan **pull request** dengan perubahan yang Anda buat.
 
