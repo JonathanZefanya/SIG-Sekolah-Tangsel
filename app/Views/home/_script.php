@@ -15,3 +15,6 @@
 <script src="<?= base_url('assets/js/plugins/choices.min.js') ?>"></script>
 <!--  Plugin for Parallax, full documentation here: https://github.com/wagerfield/parallax  -->
 <script src="<?= base_url('assets/js/plugins/parallax.min.js') ?>"></script>
+<!-- Plugin Leaflet -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.6.0/leaflet.fullscreen.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.6.0/Leaflet.fullscreen.min.js"></script>

@@ -1,6 +1,3 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.6.0/leaflet.fullscreen.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.6.0/Leaflet.fullscreen.min.js"></script>
-
 <section id="peta" style="padding-top: 100px;">
     <div class="container">
         <div class="row">
@@ -49,17 +46,6 @@
     </div>
     
 </section>
-
-<style>
-    .widget-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        z-index: 1000;
-        padding: 10px 15px;
-        font-size: 14px;
-    }
-</style>
 
 <script>
     const map = L.map('map', { attributionControl: false }).setView([-6.295503, 106.7083125], 12);
