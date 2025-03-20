@@ -13,10 +13,27 @@
                         <i class="fa-solid fa-expand"></i> Full Screen
                     </button>
 
-                    <!-- Widget Reset -->
-                    <button id="resetMap" class="btn btn-danger widget-btn" style="top: 60px;">
-                        <i class="fa-solid fa-undo"></i> Reset Peta
+                    <!-- Tombol utama untuk filter -->
+                    <button id="filterMap" class="btn btn-danger widget-btn" style="top: 60px;">
+                        <i class="fa-solid fa-filter"></i> <span id="filterLabel">Filter Tingkat</span>
                     </button>
+
+                    <!-- Dropdown Pilihan Filter -->
+                    <div id="filterOptions" class="dropdown-menu filter-box" style="display: none; position: absolute; top: 110px; right: 10px; z-index: 1000;">
+                        <button class="dropdown-item filter-option" data-value="all">
+                            <i class="fa-solid fa-school"></i> Semua Sekolah
+                        </button>
+                        <button class="dropdown-item filter-option" data-value="sd">
+                            <img src="<?= base_url('assets/images/icon/sd.png') ?>" width="20" height="20"> SD/Sederajat
+                        </button>
+                        <button class="dropdown-item filter-option" data-value="smp">
+                            <img src="<?= base_url('assets/images/icon/smp.png') ?>" width="20" height="20"> SMP/Sederajat
+                        </button>
+                        <button class="dropdown-item filter-option" data-value="sma">
+                            <img src="<?= base_url('assets/images/icon/sma.png') ?>" width="20" height="20"> SMA/Sederajat
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -65,52 +82,12 @@
             document.exitFullscreen();
         }
     });
-
-    // Widget Reset
-    document.getElementById('resetMap').addEventListener('click', function () {
-        map.setView([-6.295503, 106.7083125], 12);
-    });
-
+    
     function showPosition(position) {
         L.marker([position.coords.latitude, position.coords.longitude])
             .bindPopup('Posisi Kamu')
             .addTo(map);
     }
-
-    var sdIcon = L.icon({
-        iconUrl: '<?= base_url() ?>assets/images/icon/sd.png',
-        iconAnchor: [16, 0],
-        iconSize: [30, 30],
-    });
-
-    var smpIcon = L.icon({
-        iconUrl: '<?= base_url() ?>assets/images/icon/smp.png',
-        iconAnchor: [16, 0],
-        iconSize: [30, 30],
-    });
-
-    var smaIcon = L.icon({
-        iconUrl: '<?= base_url() ?>assets/images/icon/sma.png',
-        iconAnchor: [16, 0],
-        iconSize: [30, 30],
-    });
-
-    <?php foreach ($sekolahs as $sekolah) : ?>
-        L.marker([<?= $sekolah->sek_lokasi ?>], 
-            <?php if ($sekolah->sek_jenjang == 'sd') : ?> { icon: sdIcon }
-            <?php elseif ($sekolah->sek_jenjang == 'smp') : ?> { icon: smpIcon }
-            <?php elseif ($sekolah->sek_jenjang == 'sma') : ?> { icon: smaIcon }
-            <?php endif; ?>
-        ).bindPopup(`
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"></li>
-                <li class="list-group-item"><a href='<?= site_url('show/' . $sekolah->sek_npsn) ?>'><?= strtoupper($sekolah->sek_npsn) ?></a></li>
-                <li class="list-group-item text-muted"><?= strtoupper($sekolah->sek_nama) ?></li>
-                <li class="list-group-item text-muted"><span class="fw-bold">Alamat : </span><?= ucwords($sekolah->sek_alamat) ?></li>
-                <li class="list-group-item fw-bold"><a href='<?= site_url('show/' . $sekolah->sek_npsn) ?>'>Lihat Detail <i class="fa-solid fa-circle-info"></i></a></li>
-            </ul>
-        `).addTo(map);
-    <?php endforeach ?>
 
     // Fungsi untuk memberi warna tiap kecamatan
     function getColor(kecamatan) {
@@ -171,5 +148,84 @@
                 }).addTo(map);
             })
             .catch(error => console.error(`Error loading ${file}:`, error));
+    });
+
+    document.getElementById('filterMap').addEventListener('click', function () {
+        let filterBox = document.getElementById('filterOptions');
+        filterBox.style.display = filterBox.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.querySelectorAll('.filter-option').forEach(option => {
+        option.addEventListener('click', function () {
+            let selected = this.getAttribute('data-value');
+            let filterLabel = document.getElementById('filterLabel');
+            let filterIcon = document.getElementById('filterMap').querySelector('i');
+
+            const icons = {
+                all: '<i class="fa-solid fa-school"></i>',
+                sd: '<img src="<?= base_url('assets/images/icon/sd.png') ?>" width="20" height="20">',
+                smp: '<img src="<?= base_url('assets/images/icon/smp.png') ?>" width="20" height="20">',
+                sma: '<img src="<?= base_url('assets/images/icon/sma.png') ?>" width="20" height="20">'
+            };
+
+            filterIcon.innerHTML = icons[selected]; 
+            filterLabel.innerHTML = this.textContent.trim();
+
+            document.getElementById('filterOptions').style.display = 'none';
+
+            // Proses filter marker
+            markers.forEach(({ marker, jenjang }) => {
+                if (selected === 'all' || jenjang === selected) {
+                    marker.addTo(map);
+                } else {
+                    map.removeLayer(marker);
+                }
+            });
+        });
+    });
+
+    // Tutup dropdown jika klik di luar
+    document.addEventListener('click', function (event) {
+        let filterBox = document.getElementById('filterOptions');
+        let filterButton = document.getElementById('filterMap');
+
+        if (!filterBox.contains(event.target) && !filterButton.contains(event.target)) {
+            filterBox.style.display = 'none';
+        }
+    });
+
+    var icons = {
+        sd: L.icon({ iconUrl: '<?= base_url() ?>assets/images/icon/sd.png', iconSize: [30, 30] }),
+        smp: L.icon({ iconUrl: '<?= base_url() ?>assets/images/icon/smp.png', iconSize: [30, 30] }),
+        sma: L.icon({ iconUrl: '<?= base_url() ?>assets/images/icon/sma.png', iconSize: [30, 30] })
+    };
+
+    var markers = [];
+
+    <?php foreach ($sekolahs as $sekolah) : ?>
+        var marker = L.marker([<?= $sekolah->sek_lokasi ?>], { icon: icons['<?= $sekolah->sek_jenjang ?>'] })
+            .bindPopup(`
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><a href='<?= site_url('show/' . $sekolah->sek_npsn) ?>'><?= strtoupper($sekolah->sek_npsn) ?></a></li>
+                    <li class="list-group-item text-muted"><?= strtoupper($sekolah->sek_nama) ?></li>
+                    <li class="list-group-item text-muted"><span class="fw-bold">Alamat : </span><?= ucwords($sekolah->sek_alamat) ?></li>
+                    <li class="list-group-item fw-bold"><a href='<?= site_url('show/' . $sekolah->sek_npsn) ?>'>Lihat Detail <i class="fa-solid fa-circle-info"></i></a></li>
+                </ul>
+            `).addTo(map);
+
+        markers.push({ marker, jenjang: '<?= $sekolah->sek_jenjang ?>' });
+    <?php endforeach ?>
+
+    // Filter berdasarkan tingkat sekolah
+    document.getElementById('filterSelect').addEventListener('change', function () {
+        let selected = this.value;
+        
+        markers.forEach(({ marker, jenjang }) => {
+            if (selected === 'all' || jenjang === selected) {
+                marker.addTo(map);
+            } else {
+                map.removeLayer(marker);
+            }
+        });
     });
 </script>
