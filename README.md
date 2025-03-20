@@ -57,7 +57,6 @@
 
 ## 📋 TO-DO List
 1. 👩🏻‍💻 Menambahkan AI untuk analisis data sekolah ❌
-2. Menambahkan Filter tiap tingkat di map ❌
 
 ## 📑 Laporan
 📄 **[Laporan,Porposal,PPT Proyek](https://drive.google.com/drive/u/3/folders/1S2_OXA6j0q4qzbtuXX9pk6DwuF49yx3O)**
