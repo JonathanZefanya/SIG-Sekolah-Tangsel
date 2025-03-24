@@ -164,7 +164,7 @@
             .then(response => response.json())
             .then(geojsonData => {
                 L.geoJSON(geojsonData, {
-                    style: function () {
+                    style: function() {
                         return {
                             fillColor: getTangselColor(),
                             weight: 2,
@@ -173,25 +173,35 @@
                             fillOpacity: 0.4
                         };
                     },
-                    onEachFeature: function (feature, layer) {
+                    onEachFeature: function(feature, layer) {
+                        // Ambil nama district dan village jika tersedia
+                        const districtName = feature.properties.district || "Tidak diketahui";
+                        const villageName = feature.properties.village || "Tidak ada data";
+
                         layer.on({
-                            mouseover: function (e) {
+                            mouseover: function(e) {
                                 e.target.setStyle({
                                     fillColor: "#FF1493" // Warna lebih gelap saat hover
                                 });
                             },
-                            mouseout: function (e) {
+                            mouseout: function(e) {
                                 e.target.setStyle({
                                     fillColor: getTangselColor()
                                 });
                             }
                         });
 
-                        layer.bindPopup("<b>Kota Tangerang Selatan</b>");
+                        // Menampilkan informasi tambahan di popup
+                        layer.bindPopup(`
+                    <b>Kota:</b> Tangerang Selatan <br>
+                    <b>Kecamatan:</b> ${districtName} <br>
+                    <b>Kelurahan:</b> ${villageName}
+                `);
                     }
                 }).addTo(map);
             })
             .catch(error => console.error("Error loading Tangsel GeoJSON:", error));
+
     </script>
     <?= $this->endSection() ?>
 <?php endif; ?>

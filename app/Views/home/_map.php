@@ -61,11 +61,13 @@
             </div>
         </div>
     </div>
-    
+
 </section>
 
 <script>
-    const map = L.map('map', { attributionControl: false }).setView([-6.295503, 106.7083125], 12);
+    const map = L.map('map', {
+        attributionControl: false
+    }).setView([-6.295503, 106.7083125], 12);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
     if (navigator.geolocation) {
@@ -75,14 +77,14 @@
     }
 
     // Widget Full-Screen
-    document.getElementById('fullScreenMap').addEventListener('click', function () {
+    document.getElementById('fullScreenMap').addEventListener('click', function() {
         if (!document.fullscreenElement) {
             document.getElementById('map-container').requestFullscreen();
         } else {
             document.exitFullscreen();
         }
     });
-    
+
     function showPosition(position) {
         L.marker([position.coords.latitude, position.coords.longitude])
             .bindPopup('Posisi Kamu')
@@ -119,44 +121,51 @@
             .then(response => response.json())
             .then(geojsonData => {
                 L.geoJSON(geojsonData, {
-                    style: function (feature) {
+                    style: function(feature) {
                         return {
-                            fillColor: getColor(feature.properties.name),
+                            fillColor: getColor(feature.properties.district), // Gunakan district
                             weight: 1,
                             opacity: 1,
                             color: "#000000",
                             fillOpacity: 0.6
                         };
                     },
-                    onEachFeature: function (feature, layer) {
-                        const originalColor = getColor(feature.properties.name);
+                    onEachFeature: function(feature, layer) {
+                        const originalColor = getColor(feature.properties.district); // Warna default
+                        const districtName = feature.properties.district || "Tidak diketahui"; // Nama kecamatan
+                        const villageName = feature.properties.village || "Tidak ada data"; // Nama desa/kelurahan
 
                         layer.on({
-                            mouseover: function (e) {
-                                e.target.setStyle({ fillColor: "#FF69B4" });
+                            mouseover: function(e) {
+                                e.target.setStyle({
+                                    fillColor: "#FF69B4"
+                                });
                             },
-                            mouseout: function (e) {
-                                e.target.setStyle({ fillColor: originalColor });
+                            mouseout: function(e) {
+                                e.target.setStyle({
+                                    fillColor: originalColor
+                                });
                             },
-                            click: function (e) {
-                                e.target.setStyle({ fillColor: "#FF69B4" });
+                            click: function(e) {
+                                layer.bindPopup(`
+                                <b>Kecamatan:</b> ${districtName} <br>
+                                <b>Kelurahan:</b> ${villageName}
+                            `).openPopup();
                             }
                         });
-
-                        layer.bindPopup(`<b>${feature.properties.name}</b>`);
                     }
                 }).addTo(map);
             })
             .catch(error => console.error(`Error loading ${file}:`, error));
     });
 
-    document.getElementById('filterMap').addEventListener('click', function () {
+    document.getElementById('filterMap').addEventListener('click', function() {
         let filterBox = document.getElementById('filterOptions');
         filterBox.style.display = filterBox.style.display === 'block' ? 'none' : 'block';
     });
 
     document.querySelectorAll('.filter-option').forEach(option => {
-        option.addEventListener('click', function () {
+        option.addEventListener('click', function() {
             let selected = this.getAttribute('data-value');
             let filterLabel = document.getElementById('filterLabel');
             let filterIcon = document.getElementById('filterMap').querySelector('i');
@@ -168,13 +177,16 @@
                 sma: '<img src="<?= base_url('assets/images/icon/sma.png') ?>" width="20" height="20">'
             };
 
-            filterIcon.innerHTML = icons[selected]; 
+            filterIcon.innerHTML = icons[selected];
             filterLabel.innerHTML = this.textContent.trim();
 
             document.getElementById('filterOptions').style.display = 'none';
 
             // Proses filter marker
-            markers.forEach(({ marker, jenjang }) => {
+            markers.forEach(({
+                marker,
+                jenjang
+            }) => {
                 if (selected === 'all' || jenjang === selected) {
                     marker.addTo(map);
                 } else {
@@ -185,7 +197,7 @@
     });
 
     // Tutup dropdown jika klik di luar
-    document.addEventListener('click', function (event) {
+    document.addEventListener('click', function(event) {
         let filterBox = document.getElementById('filterOptions');
         let filterButton = document.getElementById('filterMap');
 
@@ -195,15 +207,26 @@
     });
 
     var icons = {
-        sd: L.icon({ iconUrl: '<?= base_url() ?>assets/images/icon/sd.png', iconSize: [30, 30] }),
-        smp: L.icon({ iconUrl: '<?= base_url() ?>assets/images/icon/smp.png', iconSize: [30, 30] }),
-        sma: L.icon({ iconUrl: '<?= base_url() ?>assets/images/icon/sma.png', iconSize: [30, 30] })
+        sd: L.icon({
+            iconUrl: '<?= base_url() ?>assets/images/icon/sd.png',
+            iconSize: [30, 30]
+        }),
+        smp: L.icon({
+            iconUrl: '<?= base_url() ?>assets/images/icon/smp.png',
+            iconSize: [30, 30]
+        }),
+        sma: L.icon({
+            iconUrl: '<?= base_url() ?>assets/images/icon/sma.png',
+            iconSize: [30, 30]
+        })
     };
 
     var markers = [];
 
     <?php foreach ($sekolahs as $sekolah) : ?>
-        var marker = L.marker([<?= $sekolah->sek_lokasi ?>], { icon: icons['<?= $sekolah->sek_jenjang ?>'] })
+        var marker = L.marker([<?= $sekolah->sek_lokasi ?>], {
+                icon: icons['<?= $sekolah->sek_jenjang ?>']
+            })
             .bindPopup(`
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item"><a href='<?= site_url('show/' . $sekolah->sek_npsn) ?>'><?= strtoupper($sekolah->sek_npsn) ?></a></li>
@@ -213,14 +236,20 @@
                 </ul>
             `).addTo(map);
 
-        markers.push({ marker, jenjang: '<?= $sekolah->sek_jenjang ?>' });
+        markers.push({
+            marker,
+            jenjang: '<?= $sekolah->sek_jenjang ?>'
+        });
     <?php endforeach ?>
 
     // Filter berdasarkan tingkat sekolah
-    document.getElementById('filterSelect').addEventListener('change', function () {
+    document.getElementById('filterSelect').addEventListener('change', function() {
         let selected = this.value;
-        
-        markers.forEach(({ marker, jenjang }) => {
+
+        markers.forEach(({
+            marker,
+            jenjang
+        }) => {
             if (selected === 'all' || jenjang === selected) {
                 marker.addTo(map);
             } else {
