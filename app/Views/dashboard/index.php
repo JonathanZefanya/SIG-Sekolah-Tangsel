@@ -111,7 +111,7 @@
     <script>
         const map = L.map('map', {
             attributionControl: false,
-        }).setView([-6.295326, 106.6259098], 12);
+        }).setView([-6.295503, 106.7083125], 12);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', ).addTo(map);
 
         var sdIcon = L.icon({

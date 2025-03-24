@@ -153,7 +153,7 @@
                         <small class="text-xs fw-bold text-danger">* Jika Website tidak ada maka gunakan tanda "-".</small>
                         <script>
                             document.getElementById('det_website').addEventListener('input', function() {
-                                if (this.value.match(/^(https?:\/\/|-)$/)) {
+                                if (input.value.includes('http://') || input.value.includes('https://') || input.value == '-') {
                                     this.setCustomValidity('');
                                 } else {
                                     this.setCustomValidity('URL harus diawali dengan http:// atau https:// atau "-" jika tidak ada website');
