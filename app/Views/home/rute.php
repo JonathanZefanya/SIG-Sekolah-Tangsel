@@ -25,6 +25,14 @@
         font-size: 14px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
     }
+    #map {
+        position: relative;
+    }
+    #radarCanvas {
+        width: 100%;
+        height: 100%;
+    }
+
 </style>
 </head>
 
@@ -67,6 +75,7 @@
                 <div class="row">
                     <div class="col-12 px-0">
                         <div id="map" style="height: 50rem;"></div>
+                        <canvas id="radarCanvas" style="position:absolute; top:0; left:0; z-index:999; pointer-events:none;"></canvas>
                     </div>
                 </div> <!-- /row -->
             </div> <!-- /card -->
@@ -197,7 +206,7 @@
         }
 
         // Tambahkan lingkaran dengan radius 10 kilometer di sekitar sekolah
-        const schoolRadiusKm = 5; // radius dalam kilometer
+        const schoolRadiusKm = 3; // radius dalam kilometer
         const circle = L.circle(destinationLatLng, {
             color: 'green',
             fillColor: '#0f0',
@@ -225,16 +234,63 @@
                 return false;
             };
 
-            // Peringatan jika lebih dari 10 km
-            if (distance > 5) {
+            // Peringatan jika lebih dari 3 km
+            if (distance > 3) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Di Luar Jangkauan!',
-                    text: 'Calon siswa berada lebih dari 5 km dari sekolah. Kemungkinan besar akan tersisihkan.',
+                    text: 'Calon siswa berada lebih dari 3 km dari sekolah. Kemungkinan besar akan tersisihkan.',
                     confirmButtonText: 'Oke',
                 });
             }
         }
+
+        function startRadar(centerLatLng, radiusInKm) {
+            const canvas = document.getElementById("radarCanvas");
+            const ctx = canvas.getContext("2d");
+
+            function resizeCanvas() {
+                canvas.width = map.getSize().x;
+                canvas.height = map.getSize().y;
+            }
+
+            map.on('resize zoom move', resizeCanvas);
+            resizeCanvas();
+
+            let angle = 0;
+
+            function drawRadar() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const center = map.latLngToContainerPoint(centerLatLng);
+                const radius = radiusInKm * 1000 / map.distance(centerLatLng, map.containerPointToLatLng([center.x + 100, center.y])) * 100;
+
+                ctx.save();
+                ctx.translate(center.x, center.y);
+
+                // Radar sweep area
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, radius, angle, angle + Math.PI / 12);
+                ctx.closePath();
+
+                const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
+                gradient.addColorStop(0, 'rgba(0,255,0,0.1)');
+                gradient.addColorStop(1, 'rgba(0,255,0,0.5)');
+
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                ctx.restore();
+
+                angle += 0.03; // kecepatan rotasi
+                requestAnimationFrame(drawRadar);
+            }
+
+            drawRadar();
+        }
+
+        startRadar(destinationLatLng, 3); // mulai radar dengan radius 3 km
 
         initUserLocation();
     </script>
