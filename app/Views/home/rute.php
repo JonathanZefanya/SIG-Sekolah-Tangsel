@@ -83,10 +83,9 @@
         const map = L.map('map', {
             attributionControl: false,
         }).setView([<?= $sekolah->sek_lokasi ?>], 13);
-        
+
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        
-        // Menambahkan elemen jarak di kanan atas
+
         const distanceContainer = L.control({ position: 'topright' });
 
         distanceContainer.onAdd = function () {
@@ -97,11 +96,76 @@
 
         distanceContainer.addTo(map);
 
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition, showError);
-        } else {
-            alert('Geolocation is not supported by this browser.');
+        const destinationLatLng = [<?= $sekolah->sek_lokasi ?>];
+        let userMarker = null;
+        let polyline = null;
+
+        const schoolMarker = L.marker(destinationLatLng).addTo(map).bindPopup(`
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item text-primary font-weight-bold"><?= strtoupper($sekolah->sek_nama) ?></li>
+                <li class="list-group-item fw-bold"><a href="#" id="schoolRouteLink" style="text-decoration: none;">Buka Google Maps <i class="ms-1 fa-solid fa-person-walking-arrow-right"></i></a></li>
+            </ul>
+        `).openPopup();
+
+        function updateRoute(userLatLng) {
+            if (polyline) {
+                map.removeLayer(polyline);
+            }
+
+            polyline = L.polyline([userLatLng, destinationLatLng], { color: 'blue', weight: 3 }).addTo(map);
+
+            const distance = getDistance(userLatLng[0], userLatLng[1], destinationLatLng[0], destinationLatLng[1]);
+            document.querySelector('.distance-container').innerHTML = `Jarak: ${distance.toFixed(2)} km`;
+
+            const gmapsRouteURL = `https://www.google.com/maps/dir/${userLatLng[0]},${userLatLng[1]}/${destinationLatLng[0]},${destinationLatLng[1]}`;
+            document.getElementById('gmaps-link').onclick = function () {
+                confirmNavigation(gmapsRouteURL);
+                return false;
+            };
+            document.getElementById('schoolRouteLink').onclick = function () {
+                confirmNavigation(gmapsRouteURL);
+                return false;
+            };
         }
+
+        // Inisialisasi lokasi pengguna
+        function initUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const latlng = [position.coords.latitude, position.coords.longitude];
+                    addUserMarker(latlng);
+                }, (error) => {
+                    console.error("Geolocation error:", error);
+                    const defaultLatLng = [-6.3, 106.7]; // fallback manual
+                    addUserMarker(defaultLatLng);
+                });
+            } else {
+                alert('Geolocation tidak didukung browser ini.');
+                const defaultLatLng = [-6.3, 106.7];
+                addUserMarker(defaultLatLng);
+            }
+        }
+
+        function addUserMarker(latlng) {
+            if (userMarker) {
+                map.removeLayer(userMarker);
+            }
+
+            userMarker = L.marker(latlng, { draggable: true }).addTo(map).bindPopup("Lokasi Kamu").openPopup();
+
+            updateRoute(latlng);
+
+            userMarker.on('dragend', function (e) {
+                const newPos = [e.target.getLatLng().lat, e.target.getLatLng().lng];
+                updateRoute(newPos);
+            });
+        }
+
+        // Klik di peta juga bisa ubah lokasi pengguna
+        map.on('click', function (e) {
+            const latlng = [e.latlng.lat, e.latlng.lng];
+            addUserMarker(latlng);
+        });
 
         function confirmNavigation(url) {
             Swal.fire({
@@ -120,62 +184,59 @@
             });
         }
 
-        function showPosition(position) {
-            const userLatLng = [position.coords.latitude, position.coords.longitude];
-            const destinationLatLng = [<?= $sekolah->sek_lokasi ?>];
-
-            // Menambahkan marker untuk lokasi pengguna dan tujuan
-            L.marker(userLatLng).addTo(map).bindPopup("Lokasi Kamu").openPopup();
-            // L.marker(destinationLatLng).addTo(map).bindPopup("Sekolah Tujuan").openPopup();
-
-            // Mengatur URL Google Maps untuk navigasi
-            const gmapsRouteURL = `https://www.google.com/maps/dir/${userLatLng[0]},${userLatLng[1]}/${destinationLatLng[0]},${destinationLatLng[1]}`;
-
-            // Menambahkan marker untuk sekolah tujuan
-            L.marker(destinationLatLng).addTo(map).bindPopup(`
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item text-primary font-weight-bold"><?= strtoupper($sekolah->sek_nama) ?></li>
-                    <li class="list-group-item fw-bold"><a href="#" onclick="confirmNavigation('${gmapsRouteURL}')" style="text-decoration: none;">Buka Google Maps <i class="ms-1 fa-solid fa-person-walking-arrow-right"></i></a></li>
-                </ul>
-            `).openPopup();
-
-            // Menampilkan garis lurus antara titik awal dan tujuan
-            L.polyline([userLatLng, destinationLatLng], { color: 'blue', weight: 3 }).addTo(map);
-
-            // Menghitung jarak menggunakan rumus Haversine
-            const distance = getDistance(userLatLng[0], userLatLng[1], destinationLatLng[0], destinationLatLng[1]);
-
-            // Menampilkan jarak di kanan atas peta
-            document.querySelector('.distance-container').innerHTML = `Jarak: ${distance.toFixed(2)} km`;
-
-            // Mengatur tombol Route Gmaps agar membuka rute di Google Maps
-            document.getElementById('gmaps-link').href = `https://www.google.com/maps/dir/${userLatLng[0]},${userLatLng[1]}/${destinationLatLng[0]},${destinationLatLng[1]}`;
-
-            // Mengatur tombol Route Gmaps dengan validasi konfirmasi
-            const gmapsLink = document.getElementById('gmaps-link');
-            gmapsLink.href = "#";
-            gmapsLink.onclick = function () {
-                confirmNavigation(gmapsRouteURL);
-                return false;
-            };
-        }
-
-        function showError(error) {
-            console.error("Error getting location:", error);
-            alert("Gagal mendapatkan lokasi. Pastikan GPS aktif dan izin lokasi diberikan.");
-        }
-
-        // Fungsi untuk menghitung jarak menggunakan rumus Haversine
+        // Haversine function
         function getDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Radius bumi dalam km
+            const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
             const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                     Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
                     Math.sin(dLon / 2) * Math.sin(dLon / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c; // Jarak dalam km
+            return R * c;
         }
+
+        // Tambahkan lingkaran dengan radius 10 kilometer di sekitar sekolah
+        const schoolRadiusKm = 5; // radius dalam kilometer
+        const circle = L.circle(destinationLatLng, {
+            color: 'green',
+            fillColor: '#0f0',
+            fillOpacity: 0.2,
+            radius: schoolRadiusKm * 1000 // konversi ke meter
+        }).addTo(map);
+        
+        function updateRoute(userLatLng) {
+            if (polyline) {
+                map.removeLayer(polyline);
+            }
+
+            polyline = L.polyline([userLatLng, destinationLatLng], { color: 'blue', weight: 3 }).addTo(map);
+
+            const distance = getDistance(userLatLng[0], userLatLng[1], destinationLatLng[0], destinationLatLng[1]);
+            document.querySelector('.distance-container').innerHTML = `Jarak: ${(distance).toFixed(2)} km`;
+
+            const gmapsRouteURL = `https://www.google.com/maps/dir/${userLatLng[0]},${userLatLng[1]}/${destinationLatLng[0]},${destinationLatLng[1]}`;
+            document.getElementById('gmaps-link').onclick = function () {
+                confirmNavigation(gmapsRouteURL);
+                return false;
+            };
+            document.getElementById('schoolRouteLink').onclick = function () {
+                confirmNavigation(gmapsRouteURL);
+                return false;
+            };
+
+            // Peringatan jika lebih dari 10 km
+            if (distance > 5) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Di Luar Jangkauan!',
+                    text: 'Calon siswa berada lebih dari 5 km dari sekolah. Kemungkinan besar akan tersisihkan.',
+                    confirmButtonText: 'Oke',
+                });
+            }
+        }
+
+        initUserLocation();
     </script>
 </body>
 
