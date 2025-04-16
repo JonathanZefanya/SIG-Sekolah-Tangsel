@@ -109,14 +109,28 @@
         let userMarker = null;
         let polyline = null;
 
-        const schoolMarker = L.marker(destinationLatLng).addTo(map).bindPopup(`
+       const schoolMarker = L.marker(destinationLatLng)
+        .addTo(map)
+        .bindPopup(`
             <ul class="list-group list-group-flush">
                 <li class="list-group-item text-primary font-weight-bold"><?= strtoupper($sekolah->sek_nama) ?></li>
-                <li class="list-group-item fw-bold"><a href="#" id="schoolRouteLink" style="text-decoration: none;">Buka Google Maps <i class="ms-1 fa-solid fa-person-walking-arrow-right"></i></a></li>
+                <li class="list-group-item fw-bold">
+                    <a href="#" class="popup-gmaps-link" target="_blank" style="text-decoration: none;">
+                        Buka Google Maps <i class="ms-1 fa-solid fa-person-walking-arrow-right"></i>
+                    </a>
+                </li>
             </ul>
-        `).openPopup();
+        `)
+        .on("popupopen", () => {
+            const popupLink = document.querySelector(".popup-gmaps-link");
+            popupLink.addEventListener("click", function (e) {
+                e.preventDefault();
+                const gmapsRouteURL = `https://www.google.com/maps/dir/${userMarker.getLatLng().lat},${userMarker.getLatLng().lng}/${destinationLatLng[0]},${destinationLatLng[1]}`;
+                confirmNavigation(gmapsRouteURL);
+            });
+        });
 
-        function updateRoute(userLatLng) {
+        {/* function updateRoute(userLatLng) {
             if (polyline) {
                 map.removeLayer(polyline);
             }
@@ -135,7 +149,7 @@
                 confirmNavigation(gmapsRouteURL);
                 return false;
             };
-        }
+        } */}
 
         // Inisialisasi lokasi pengguna
         function initUserLocation() {
@@ -214,7 +228,9 @@
             radius: schoolRadiusKm * 1000 // konversi ke meter
         }).addTo(map);
         
+        let lastUserLatLng = null;
         function updateRoute(userLatLng) {
+            lastUserLatLng = userLatLng;
             if (polyline) {
                 map.removeLayer(polyline);
             }
