@@ -32,6 +32,7 @@ $routes->set404Override();
 $routes->get('/', 'Home::index');
 $routes->get('show/(:segment)', 'Home::show/$1');
 $routes->get('rute/(:segment)', 'Home::rute/$1');
+$routes->get('/chatme', 'Chatme::index');
 
 $routes->group('', ['filter' => 'loggedin'], function ($routes) {
     $routes->get('/login', 'Auth::login');
@@ -79,6 +80,8 @@ $routes->group('', ['filter' => 'notloggedin'], function ($routes) {
     $routes->get('detail-sekolah/import', 'Sekolah::importDetailPage');
     $routes->post('sekolah/import', 'Sekolah::import');
     $routes->post('detail-sekolah/import', 'Sekolah::importDetailSekolah');
+    $routes->get('/chatbot', 'ChatbotConfig::index');
+    $routes->post('/chatbot/update', 'ChatbotConfig::update');
 
     // Get Data Kelurahan
     $routes->post('sekolah/getkelurahan', 'AddSekolah::getData');

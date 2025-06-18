@@ -3,16 +3,24 @@
 namespace App\Controllers;
 
 use App\Models\SekolahModel;
+use App\Models\ChatConfigModel;
 
 class Home extends BaseController
 {
     public function index()
     {
         $sekolah = new SekolahModel();
-        $data['sekolahs'] = $sekolah->getDetailSekolah();
-        $data['sd'] = $sekolah->where('sek_jenjang', 'sd')->findAll();
-        $data['smp'] = $sekolah->where('sek_jenjang', 'smp')->findAll();
-        $data['sma'] = $sekolah->where('sek_jenjang', 'sma')->findAll();
+        $configModel = new ChatConfigModel();
+        $config = $configModel->first();
+
+        $data = [
+            'sekolahs' => $sekolah->getDetailSekolah(),
+            'sd' => $sekolah->where('sek_jenjang', 'sd')->findAll(),
+            'smp' => $sekolah->where('sek_jenjang', 'smp')->findAll(),
+            'sma' => $sekolah->where('sek_jenjang', 'sma')->findAll(),
+            'chatbot_enabled' => $config['is_enabled'] ?? false
+        ];
+
         return view('home/app', $data);
     }
     public function show($id)

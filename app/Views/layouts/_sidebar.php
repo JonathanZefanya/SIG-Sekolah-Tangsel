@@ -25,6 +25,14 @@
                           <span class="nav-link-text ms-1 font-weight-bold text-dark text-sm">Data Login</span>
                       </a>
                   </li>
+                  <li class="nav-item">
+                      <a class="nav-link <?= url_is('chatbot*') ? 'active' : '' ?>" href="<?= site_url('chatbot') ?>">
+                          <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                              <i class="fas fa-robot text-dark text-sm opacity-10"></i>
+                          </div>
+                          <span class="nav-link-text ms-1 font-weight-bold text-dark text-sm">Pengaturan Chatbot</span>
+                      </a>
+                  </li>
               <?php endif; ?>
 
               <?php if (session()->get('user_akses') != 'sekolah') : ?>

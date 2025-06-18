@@ -39,6 +39,14 @@
                                 </a>
                             </li>
 
+                            <?php if (!empty($chatbot_enabled)) : ?>
+                                <li class="nav-item ms-lg-auto me-2">
+                                    <a class="nav-link nav-link-icon" href="<?= base_url('/chatme') ?>">
+                                        <p class="d-inline text-sm z-index-1 font-weight-bold">Chatbot</p>
+                                    </a>
+                                </li>
+                            <?php endif; ?>
+
                             <li class="nav-item my-auto ms-3 ms-lg-4">
                                 <?php if (!session()->get('logged_in')) : ?>
                                     <a href="<?= site_url('/login') ?>" class="btn btn-sm bg-gradient-primary mb-0 me-1 mt-2 mt-md-0">Masuk</a>
