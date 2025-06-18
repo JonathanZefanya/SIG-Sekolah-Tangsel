@@ -14,26 +14,29 @@
     <?= $this->include('home/_head') ?>
 
     <style>
-    .distance-container {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 10px 15px;
-        border-radius: 5px;
-        font-weight: bold;
-        font-size: 14px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    }
-    #map {
-        position: relative;
-    }
-    #radarCanvas {
-        width: 100%;
-        height: 100%;
-    }
+        .distance-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+        #map {
+            position: relative;
+        }
+        #radarCanvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 
-</style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@1.6.0/Control.FullScreen.css" />
+    <script src="https://unpkg.com/leaflet.fullscreen@1.6.0/Control.FullScreen.js"></script>
+
 </head>
 
 <body class="index-page bg-gray-200">
@@ -75,11 +78,18 @@
                 <div class="row">
                     <div class="col-12 px-0">
                         <div id="map" style="height: 50rem;"></div>
-                        <canvas id="radarCanvas" style="position:absolute; top:0; left:0; z-index:999; pointer-events:none;"></canvas>
+                        <canvas id="radarCanvas" style="position:absolute; top:0; left:0; z-index:999; pointer-events:none;">
+                            <!-- Tombol Fullscreen -->
+                        <div style="position:absolute; bottom:10px; right:10px; z-index:1000;">
+                            <button class="btn btn-sm btn-dark" onclick="toggleFullscreen()">
+                                <i class="fas fa-expand-arrows-alt"></i> Fullscreen
+                            </button>
+                        </div>
+                        </canvas>
                         <!-- Button Shortcut (Top-Center) -->
                         <div style="position:absolute; top:10px; left:50%; transform:translateX(-50%); z-index:1000;">
                         <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalDomisili">
-                            Isi Alamat Domisili
+                            Ketentuan Domisili
                         </button>
                         </div>
 
@@ -87,18 +97,25 @@
                         <div class="modal fade" id="modalDomisili" tabindex="-1" aria-labelledby="modalDomisiliLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                            <form id="alamatForm">
-                                <div class="modal-header">
-                                <h5 class="modal-title">Masukkan Alamat Domisili</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                                </div>
-                                <div class="modal-body">
-                                <input type="text" class="form-control" id="alamatInput" placeholder="Contoh: Jl. Merdeka No.10, Tangerang Selatan" required>
-                                </div>
-                                <div class="modal-footer">
-                                <button type="submit" class="btn btn-success">Cari Titik Lokasi</button>
-                                </div>
-                            </form>
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalDomisiliLabel">Ketentuan Domisili</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Untuk memastikan calon siswa berada dalam jangkauan sekolah, berikut ketentuan domisili:</p>
+                            <ul>
+                                <li>Calon siswa harus berada dalam radius 3 km dari sekolah.</li>
+                                <li>Jika berada di luar radius, kemungkinan besar akan tersisihkan.</li>
+                                <li>Pastikan lokasi Anda akurat saat mengisi formulir pendaftaran.</li>
+                                <li>Gunakan fitur peta untuk menentukan lokasi Anda dengan tepat.</li>
+                            </ul>
+                            <p>Jika Anda berada di luar jangkauan, silakan hubungi pihak sekolah untuk informasi lebih lanjut.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a id="schoolRouteLink" href="#" class="btn btn-success">
+                                Lihat Rute ke Sekolah
+                            </a>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                             </div>
                         </div>
                         </div>
@@ -117,6 +134,7 @@
     <script>
         const map = L.map('map', {
             attributionControl: false,
+            fullscreenControl: true
         }).setView([<?= $sekolah->sek_lokasi ?>], 13);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -200,7 +218,7 @@
                 map.removeLayer(userMarker);
             }
 
-            userMarker = L.marker(latlng, { draggable: true }).addTo(map).bindPopup("Lokasi Kamu").openPopup();
+            userMarker = L.marker(latlng, { draggable: false }).addTo(map).bindPopup("Lokasi Kamu").openPopup();
 
             updateRoute(latlng);
 
@@ -211,10 +229,11 @@
         }
 
         // Klik di peta juga bisa ubah lokasi pengguna
-        map.on('click', function (e) {
-            const latlng = [e.latlng.lat, e.latlng.lng];
-            addUserMarker(latlng);
-        });
+
+        // map.on('click', function (e) {
+        //     const latlng = [e.latlng.lat, e.latlng.lng];
+        //     addUserMarker(latlng);
+        // });
 
         function confirmNavigation(url) {
             Swal.fire({
@@ -255,39 +274,8 @@
         }).addTo(map);
         
         let lastUserLatLng = null;
-        // function updateRoute(userLatLng) {
-        //     lastUserLatLng = userLatLng;
-        //     if (polyline) {
-        //         map.removeLayer(polyline);
-        //     }
-
-        //     polyline = L.polyline([userLatLng, destinationLatLng], { color: 'blue', weight: 3 }).addTo(map);
-
-        //     const distance = getDistance(userLatLng[0], userLatLng[1], destinationLatLng[0], destinationLatLng[1]);
-        //     document.querySelector('.distance-container').innerHTML = `Jarak: ${(distance).toFixed(2)} km`;
-
-        //     const gmapsRouteURL = `https://www.google.com/maps/dir/${userLatLng[0]},${userLatLng[1]}/${destinationLatLng[0]},${destinationLatLng[1]}`;
-        //     document.getElementById('gmaps-link').onclick = function () {
-        //         confirmNavigation(gmapsRouteURL);
-        //         return false;
-        //     };
-        //     document.getElementById('schoolRouteLink').onclick = function () {
-        //         confirmNavigation(gmapsRouteURL);
-        //         return false;
-        //     };
-
-        //     // Peringatan jika lebih dari 3 km
-        //     if (distance > 3) {
-        //         Swal.fire({
-        //             icon: 'warning',
-        //             title: 'Di Luar Jangkauan!',
-        //             text: 'Calon siswa berada lebih dari 3 km dari sekolah. Kemungkinan besar akan tersisihkan.',
-        //             confirmButtonText: 'Oke',
-        //         });
-        //     }
-        // }
-
         function updateRoute(userLatLng) {
+            lastUserLatLng = userLatLng;
             if (polyline) {
                 map.removeLayer(polyline);
             }
@@ -295,15 +283,38 @@
             polyline = L.polyline([userLatLng, destinationLatLng], { color: 'blue', weight: 3 }).addTo(map);
 
             const distance = getDistance(userLatLng[0], userLatLng[1], destinationLatLng[0], destinationLatLng[1]);
-            document.querySelector('.distance-container').innerHTML = `Jarak: ${distance.toFixed(2)} km`;
+            document.querySelector('.distance-container').innerHTML = `Jarak: ${(distance).toFixed(2)} km`;
 
             const gmapsRouteURL = `https://www.google.com/maps/dir/${userLatLng[0]},${userLatLng[1]}/${destinationLatLng[0]},${destinationLatLng[1]}`;
             document.getElementById('gmaps-link').onclick = function () {
                 confirmNavigation(gmapsRouteURL);
                 return false;
             };
+            document.getElementById('schoolRouteLink').onclick = function () {
+                confirmNavigation(gmapsRouteURL);
+                return false;
+            };
+
+            // Peringatan jika lebih dari 3 km
+            if (distance > 3) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Di Luar Jangkauan!',
+                    text: 'Calon siswa berada lebih dari 3 km dari sekolah. Kemungkinan besar akan tersisihkan.',
+                    confirmButtonText: 'Oke',
+                });
+            }
         }
 
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.getElementById("map").requestFullscreen().catch(err => {
+                    alert(`Gagal masuk fullscreen: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
 
         function startRadar(centerLatLng, radiusInKm) {
             const canvas = document.getElementById("radarCanvas");
@@ -352,49 +363,8 @@
 
         startRadar(destinationLatLng, 3); // mulai radar dengan radius 3 km
 
-        // initUserLocation();
+        initUserLocation();
     </script>
-    <script>
-        document.getElementById("alamatForm").addEventListener("submit", function (e) {
-            e.preventDefault();
-            const alamat = document.getElementById("alamatInput").value;
-
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(alamat)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        const lat = parseFloat(data[0].lat);
-                        const lon = parseFloat(data[0].lon);
-                        const latlng = [lat, lon];
-                        addUserMarker(latlng);
-                        map.setView(latlng, 15);
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Koordinat ditemukan',
-                            text: `Latitude: ${lat}, Longitude: ${lon}`,
-                        });
-
-                        const modal = bootstrap.Modal.getInstance(document.getElementById("modalDomisili"));
-                        modal.hide();
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Alamat tidak ditemukan',
-                            text: 'Coba gunakan format alamat yang lebih lengkap atau jelas.',
-                        });
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Terjadi kesalahan',
-                        text: 'Gagal mengambil data lokasi.',
-                    });
-                });
-        });
-        </script>
 </body>
 
 </html>
