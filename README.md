@@ -10,6 +10,7 @@
 - 🎯 **Filter Berdasarkan Jenjang**: Memfilter sekolah berdasarkan **jenjang pendidikan**.
 - 🚗 **Rute ke Sekolah**: Menampilkan **rute dari lokasi pengguna** ke sekolah yang dipilih.
 - 🔧 **Pengelolaan Data**: Admin dapat **menambah, mengedit, dan menghapus** data sekolah.
+- 💬 **Chatbot Bantuan**: Fitur chatbot untuk membantu pengguna mendapatkan informasi terkait sekolah dan penggunaan aplikasi.
 
 ## 🛠 Teknologi yang Digunakan
 - **🖥 Framework**: CodeIgniter 4
