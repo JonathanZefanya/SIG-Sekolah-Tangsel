@@ -8,7 +8,7 @@
                     <div class="col-12">
                         <div class="btn-group d-flex flex-wrap" role="group" aria-label="Basic radio toggle button group">
                             <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" onclick="filterJenjang('')" checked>
-                            <label class="btn btn-outline-primary flex-fill" for="btnradio1">Semua Jenjang</label>
+                            <label class="btn btn-outline-primary flex-fill" for="btnradio1">All</label>
 
                             <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" onclick="filterJenjang('SD')">
                             <label class="btn btn-outline-primary flex-fill" for="btnradio2">SD</label>
