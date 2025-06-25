@@ -21,6 +21,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- End -->
                 <div class="card p-4">
                     <div class="table-responsive">
                         <table class="table align-items-center mb-0" id="data_sekolah">

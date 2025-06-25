@@ -15,7 +15,7 @@
 ## 🛠 Teknologi yang Digunakan
 - **🖥 Framework**: CodeIgniter 4
 - **🗄 Database**: MySQL
-- **🎨 Frontend**: HTML, CSS, JavaScript (**Leaflet JS, Bootstrap/Tailwind CSS**)
+- **🎨 Frontend**: HTML, CSS, JavaScript (**Leaflet JS, Bootstrap 5**)
 - **🗺️ Peta**: OpenStreetMap dengan Leaflet JS
 
 ## 🚀 Instalasi
